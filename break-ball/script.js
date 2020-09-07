@@ -1,13 +1,20 @@
 const showRulesButton = document.getElementById('showGameRules');
 const closeRulesButton = document.getElementById('closeGameRules');
 const showRulesInstruction = document.getElementById('styleRulesId');
+const playButton = document.getElementById('playGame');
+const pauseButton = document.getElementById('pauseGame');
+
 const canvas = document.getElementById('drawing');
 const ctx = canvas.getContext('2d');
 
 let score = 0;
-
+let playing = "pause";
 const brickRowSize = 9;
 const brickColSize = 5;
+
+
+
+
 
 //brick property
 const brickProperty = {
@@ -49,6 +56,21 @@ showRulesButton.addEventListener('click', () =>
 
 closeRulesButton.addEventListener('click', () =>
     showRulesInstruction.classList.remove('show'));
+
+
+playButton.addEventListener('click', startGame);
+
+function startGame(){
+    playing = "play";
+    console.log('should be playing');
+}
+
+pauseButton.addEventListener('click', pauseGame);
+
+function pauseGame(){
+    playing = "pause";
+    console.log('should be pause');
+}
 
 //function to draw ball on canvas
 function drawBall(){
@@ -167,10 +189,14 @@ function drawAllBricks(){
 }
 
 //drawing the animation of canvas.
+draw();
 drawUpdate();
 function drawUpdate(){
-    draw();
+    if(playing === "play"){
+        draw();
+    }
     requestAnimationFrame(drawUpdate);
+   
 }
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);

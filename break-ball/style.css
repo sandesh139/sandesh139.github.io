@@ -99,6 +99,23 @@ canvas{
     top: 30px;
     left: 120px;
 }
+
+.playGame {
+    background-color: #5fc28d;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+
+.playGame:hover{
+    background: rgb(98, 202, 209);
+}
 .showInstructionRules{
     position: absolute;
     top:0;
