@@ -123,10 +123,10 @@ function drawBricks(){
 canvas.addEventListener("mousemove", function(e) { 
     var cRect = canvas.getBoundingClientRect();        // Gets CSS pos, and width/height
     var canvasX = Math.round(e.clientX - cRect.left);  // Subtract the 'left' of the canvas
-      // (0,0) the top left of the canvas
-    //ctx.fillText("X: "+canvasX+", Y: "+canvasY, 10, 20);
     paddle.x = canvasX;
 });
+
+
 
 function moveBall(){
     ball.x += ball.dx;
