@@ -9,7 +9,7 @@
  * and set the data to appropriate states
  *By D M Raisul Ahsan
  */
-const  api_url = 'covidtracking.com/api/v1/states/daily.json';
+const  api_url = 'https://covidtracking.com/api/v1/states/daily.json';
 let dataGlobal = null;
 async  function getData() {
     const response = await fetch(api_url);
