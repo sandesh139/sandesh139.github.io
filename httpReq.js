@@ -9,10 +9,11 @@
  * and set the data to appropriate states
  *By D M Raisul Ahsan
  */
-const  api_url = 'https://covidtracking.com/api/v1/states/daily.json';
+const proxyurl = "https://cors-anywhere.herokuapp.com/";
+const  api_url = "https://covidtracking.com/api/v1/states/daily.json";
 let dataGlobal = null;
 async  function getData() {
-    const response = await fetch(api_url, {
+    const response = await fetch(proxyurl+api_url, {
         mode: 'cors'
     });
     dataGlobal = await response.json();
