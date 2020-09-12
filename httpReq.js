@@ -13,8 +13,7 @@ const  api_url = 'https://covidtracking.com/api/v1/states/daily.json';
 let dataGlobal = null;
 async  function getData() {
     const response = await fetch(api_url, {
-        mode: 'cors',
-        credentials:'include'
+        mode: 'cors'
     });
     dataGlobal = await response.json();
     await dataGlobal;
