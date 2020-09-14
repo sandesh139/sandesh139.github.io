@@ -195,7 +195,11 @@ function drawOvals(){
             ctx.beginPath();
             ctx.ellipse(eachOval.x, eachOval.y, actualWidth, actuaHeight, 0, 0, 2 * Math.PI);
             if(eachOval.touched && eachOval.empty){
-                ctx.fillStyle = 'red';
+                if(turnCounter % 2 == 0){
+                    ctx.fillStyle = 'red';
+                } else if(turnCounter % 2 == 1) {
+                    ctx.fillStyle = 'blue';
+                }
             } else if(eachOval.empty) {
                 ctx.fillStyle = '#e6ffff';
             } else if (eachOval.player === "human"){
@@ -508,7 +512,7 @@ function computerPlayer(){
 
 
 function drawUpdate(){
-    setTimeout(drawUpdate,300);
+    setTimeout(drawUpdate,200);
     draw();
     //requestAnimationFrame(drawUpdate);
    
