@@ -90,9 +90,14 @@ submitButton.addEventListener('click', setBoard);
 
 resetButton.addEventListener('click', resetBoard);
 
+computerButton.addEventListener('click', setComputer);
+
 function setComputer(){
     if(!started){
     computerPlaying = true;
+    setBoard();
+    
+
     } else {
         alert('reset the game');
     }    
@@ -102,10 +107,16 @@ function setBoard(){
     ovals = [];
     turnCounter = 0;
     let test ="";
+    var inputRow, inputCol =0;
     if(!started){
-    const inputRow = document.getElementById('rowInput').value;
-    const inputCol = document.getElementById('colInput').value;
     
+    if(!computerPlaying){
+        inputRow = document.getElementById('rowInput').value;
+        inputCol = document.getElementById('colInput').value;
+    } else {
+        inputRow = defaultRow;
+        inputCol = defaultCol;
+    }
     if (isNaN(inputRow) || inputRow < 4 || inputRow > 20 || isNaN(inputCol)
         || inputCol <4 || inputCol >20) {
         test = "Not-valid: give in between 4 and 20";
@@ -221,6 +232,7 @@ function resetBoard(){
     defaultCol = 8;
     defaultRow = 8;
     turnCounter = 0;
+    computerPlaying =false;
 }
 
 
@@ -240,6 +252,7 @@ canvas.addEventListener("mousemove", function(e) {
 canvas.addEventListener("click", clickHandle, false);
 
 function clickHandle(e){
+    
     var humanTime =true;
     if(!foundWinner){
     
@@ -272,6 +285,7 @@ function clickHandle(e){
                         dropPiece(i,j,"computer");
                         turnCounter++;
                     }
+                    started = true;
                     humanTime =false;
                     //undoDrop(j); //this is working
                     
