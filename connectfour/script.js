@@ -232,16 +232,8 @@ function clickHandle(e){
                 if(ovals[i][j].touched && ovals[i][j].empty){
                     console.log(ovals[i][j].posX + " "+ ovals[i][j].posY);
                     dropPiece(i,j,"human");
-                    // while(i+1< defaultRow){
-                    //     if(!ovals[i+1][j].empty){
-                    //         break;
-                    //     }
-                    //     i++;
-                    // }
-                    // console.log("this is i" + i);
-                    // ovals[i][j].empty = false;
-                    // ovals[i][j].player = "human";
-                    // playerTurn= false;
+                    //undoDrop(j); //this is working
+                    
                 }
             }
         }
@@ -316,9 +308,46 @@ function findWinner(){
 }
 
 function bestMoveforComputer(){
-    var depth;
+    var depth = 7;
+    var result = -20;
+    var bestColumn = 0;
+
+    for (var c=0; c<defaultCol;c++)
+            if (isLegal(c)){
+                dropPiece(0,c,"computer");
+                var best = minScoreForHuman(board,maxDepth,1);
+                undoDrop(board,c);
+                if (best>=result){
+                    result = best;
+                    bestColumn=c;
+                }
+            }
+        // Hint: this will be similar to maxScoreForComputer
+        if(bestColumn === defaultCol -1){
+            bestColumn = Math.floor(Math.random() * defaultCol);
+        }
+        return bestColumn;
 }
 
+function undoDrop(column){
+    var row = 0;
+        while(ovals[row][column].empty && row < defaultRow) {
+            row++;
+        }
+        // Set the top row that had a piece to empty again.
+        ovals[row][column].player = "none";
+        ovals[row][column].empty = true;
+}
+
+
+function isLegal(column){
+    if (column >= 0 && column < defaultCol) {
+        if (ovals[defaultRow-1][column].empty) {
+            return true;
+        }
+    }
+    return false;
+}
 //drawing the animation of canvas.
 drawUpdate();
 
