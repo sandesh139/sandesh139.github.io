@@ -4,6 +4,8 @@ const showRulesInstruction = document.getElementById('styleRulesId');
 
 const submitButton = document.getElementById('submission');
 
+const resetButton = document.getElementById('reset');
+
 
 // const pauseButton = document.getElementById('pauseGame');
 
@@ -12,7 +14,7 @@ const ctx = canvas.getContext('2d');
 
 var started = false;
 
-
+var playerTurn = true;
 
 let score = 0;
 let playing = "pause";
@@ -39,7 +41,8 @@ var ovalProperty = {
     offsetX: colOffSet,
     offsetY: rowOffSet,
     empty: true,
-    touched: false
+    touched: false,
+    player: "none"
 }
 
 const ovals = [];
@@ -51,7 +54,9 @@ for (let i = 0; i< defaultRow; i++){
     for(let j = 0; j< defaultCol; j++){
         const x = j * (ovalProperty.width*2 + ovalProperty.offsetX) +2*ovalProperty.width;
         const y = i * (ovalProperty.height *2+ ovalProperty.offsetY)+2*ovalProperty.height;
-        ovals[i][j] = {x, y , ...ovalProperty}
+        const posX = i;
+        const posY = j;
+        ovals[i][j] = {x, y , posX,posY, ...ovalProperty}
     }
 }
 
@@ -67,6 +72,8 @@ const mouseLocation = {
 
 
 
+
+
 //showing and hiding the instruction
 showRulesButton.addEventListener('click', () =>
     showRulesInstruction.classList.add('show'));
@@ -76,11 +83,14 @@ closeRulesButton.addEventListener('click', () =>
 
 submitButton.addEventListener('click', setBoard);
 
+resetButton.addEventListener('click', resetBoard);
+
 function setBoard(){
+    let test ="";
     if(!started){
     const inputRow = document.getElementById('rowInput').value;
     const inputCol = document.getElementById('colInput').value;
-    let test ="";
+    
     if (isNaN(inputRow) || inputRow < 4 || inputRow > 20 || isNaN(inputCol)
         || inputCol <4 || inputCol >20) {
         test = "Not-valid: give in between 4 and 20";
@@ -116,8 +126,14 @@ function setBoard(){
         }
 
     }
-    document.getElementById("valid").innerHTML = test;
+    
+} else{
+    test = "Press- reset and submit the board again";
 }
+
+document.getElementById("valid").innerHTML = test;
+
+
 }
 
 
@@ -163,16 +179,30 @@ function drawOvals(){
         column.forEach(eachOval =>{
             ctx.beginPath();
             ctx.ellipse(eachOval.x, eachOval.y, actualWidth, actuaHeight, 0, 0, 2 * Math.PI);
-            if(eachOval.touched){
+            if(eachOval.touched && eachOval.empty){
                 ctx.fillStyle = 'red';
-            } else {
+            } else if(eachOval.empty) {
                 ctx.fillStyle = '#e6ffff';
+            } else if (eachOval.player === "human"){
+                ctx.fillStyle = 'red';
+            } else if (eachOval.player === "computer"){
+                ctx.fillStyle = 'blue';
             }
             
             ctx.fill();
             ctx.closePath();
         })
     })
+}
+
+function resetBoard(){
+    ovals.forEach(column =>{
+        column.forEach(eachOval => {
+            eachOval.empty = true;
+            eachOval.player = "none";
+        })
+    })
+    started = false;
 }
 
 
@@ -189,23 +219,126 @@ canvas.addEventListener("mousemove", function(e) {
     //console.log(canvasX +"  "+ canvasY);
 });
 
+canvas.addEventListener("click", clickHandle, false);
 
+function clickHandle(e){
+    if(findWinner() === "human"){
+        console.log("Human won");
+    }
+    let row,col;
+    if(playerTurn){
+        for(let i =0; i< defaultRow; i++){
+            for(let j = 0; j< defaultCol; j++){
+                if(ovals[i][j].touched && ovals[i][j].empty){
+                    console.log(ovals[i][j].posX + " "+ ovals[i][j].posY);
+                    dropPiece(i,j,"human");
+                    // while(i+1< defaultRow){
+                    //     if(!ovals[i+1][j].empty){
+                    //         break;
+                    //     }
+                    //     i++;
+                    // }
+                    // console.log("this is i" + i);
+                    // ovals[i][j].empty = false;
+                    // ovals[i][j].player = "human";
+                    // playerTurn= false;
+                }
+            }
+        }
+   
+}
+    computerPlayer();
+    if(findWinner() === "human"){
+        console.log("Human won");
+    }
+}
+
+function dropPiece(dropRow, dropCol, playerWho){
+    i = dropRow;
+    j = dropCol;
+    while(i+1< defaultRow){
+        if(!ovals[i+1][j].empty){
+            break;
+        }
+        i++;
+    }
+    console.log("this is i" + i);
+    ovals[i][j].empty = false;
+    ovals[i][j].player = playerWho;
+    //playerTurn= false;
+
+}
+
+function findLocalWinner(r,c,rowOffSet,colOffSet){
+    var x = r;
+    var y = c;
+    var player = ovals[r][c].player;
+    var i = 1;
+    var localWinner = false;
+    var a = 0;
+    var isEmpty = ovals[r][c].empty;
+    if(!isEmpty){
+    while (i<5 && x>=0&&x<defaultRow &&y>=0 &&y<defaultCol ) {
+        if (ovals[x][y].player===player) {
+            x = r + i * rowOffSet;
+            y = c + i * colOffSet;
+            a++;
+            if (a > 3) {
+                localWinner = true;
+            }
+        }
+        i++;
+    }
+}
+    return localWinner;
+}
+
+
+function findWinner(){
+    for (let c =0;c<defaultCol;c++){
+        for(let r=0; r<defaultRow;r++) {
+            let winner = ovals[r][c].player;
+            if (findLocalWinner(r, c, 0, 1)) {
+                return winner;
+            }
+            if (findLocalWinner(r, c, 1, 0)) {
+                return winner;
+            }
+            if (findLocalWinner(r, c, 1, 1)) {
+                return winner;
+            }
+            if (findLocalWinner(r, c, 1, -1)) {
+                return winner;
+            }
+        }
+    }
+    return null;
+}
+
+function bestMoveforComputer(){
+    var depth;
+}
 
 //drawing the animation of canvas.
-draw();
 drawUpdate();
+
+function computerPlayer(){
+    console.log("Hi this is computer playeing");
+}
+
+
 function drawUpdate(){
 
     draw();
-    // if(playing === "play"){
-    //     draw();
-    // }
+    
     requestAnimationFrame(drawUpdate);
    
 }
+
+
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBackground();
     drawOvals();
-    
 }
+
