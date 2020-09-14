@@ -6,6 +6,7 @@ const submitButton = document.getElementById('submission');
 
 const resetButton = document.getElementById('reset');
 
+const computerButton = document.getElementById('computer');
 
 // const pauseButton = document.getElementById('pauseGame');
 
@@ -16,6 +17,9 @@ const maxDepth = 7;
 var started = false;
 
 var playerTurn = true;
+var computerPlaying = false;
+
+var turnCounter = 0;
 
 let score = 0;
 let playing = "pause";
@@ -26,8 +30,8 @@ var foundWinner = false;
 const defaultHeight = canvas.height;
 const defaultWidth = canvas.width;
 
-var defaultRow = 8;
-var defaultCol = 8;
+var defaultRow = 7;
+var defaultCol = 7;
 
 var getRowHeight = defaultHeight/defaultRow;
 var getColWidth = defaultWidth/defaultCol;
@@ -86,10 +90,19 @@ submitButton.addEventListener('click', setBoard);
 
 resetButton.addEventListener('click', resetBoard);
 
+function setComputer(){
+    if(!started){
+    computerPlaying = true;
+    } else {
+        alert('reset the game');
+    }    
+}
+
 function setBoard(){
     ovals = [];
+    turnCounter = 0;
     let test ="";
-    if(true){
+    if(!started){
     const inputRow = document.getElementById('rowInput').value;
     const inputCol = document.getElementById('colInput').value;
     
@@ -203,6 +216,7 @@ function resetBoard(){
     started = false;
     defaultCol = 8;
     defaultRow = 8;
+    turnCounter = 0;
 }
 
 
@@ -228,25 +242,32 @@ function clickHandle(e){
     if(findWinner() === "human"){
         drawOvals();
         foundWinner = true;
-        console.log("Human won");
-        alert("You won !");
+        console.log("Red won");
+        alert("Red won !");
     } else if(findWinner() === "computer"){
         drawOvals();
         foundWinner = true;
-        console.log("computer won !");
-        alert("computer won !");
+        
+        alert("Blue won !");
+        
     }
     if(isFull()){
         alert("Game is draw");
         foundWinner =true;
     }
     let row,col;
-    if(playerTurn){
+    if(playerTurn || !computerPlaying){
         for(let i =0; i< defaultRow; i++){
             for(let j = 0; j< defaultCol; j++){
                 if(ovals[i][j].touched && ovals[i][j].empty){
                     //console.log(ovals[i][j].posX + " "+ ovals[i][j].posY);
-                    dropPiece(i,j,"human");
+                    if(turnCounter %2 == 0){
+                        dropPiece(i,j,"human");
+                        turnCounter++;
+                    } else if(!computerPlaying) {
+                        dropPiece(i,j,"computer");
+                        turnCounter++;
+                    }
                     humanTime =false;
                     //undoDrop(j); //this is working
                     
@@ -259,17 +280,18 @@ function clickHandle(e){
     if(findWinner() === "human"){
         drawOvals();
         foundWinner = true;
-        console.log("Human won");
-        alert("You won !");
+        
+        alert("Red won !");
     } else if(findWinner() === "computer"){
         drawOvals();
         foundWinner = true;
         console.log("computer won !");
-        alert("computer won !");
+        alert("Blue  won !");
 
     }
-    if(!foundWinner &&! humanTime){
+    if(!foundWinner &&! humanTime && computerPlaying){
         computerPlayer();
+        turnCounter++;
     }
     if(isFull()){
         alert("Game is draw");
@@ -290,7 +312,7 @@ function dropPiece(dropRow, dropCol, playerWho){
         }
         i++;
     }
-    console.log("this is i" + i);
+    //console.log("this is i" + i);
     ovals[i][j].empty = false;
     ovals[i][j].player = playerWho;
     //playerTurn= false;
@@ -394,7 +416,7 @@ function maxScoreForComputer(depth) {
 
 function minScoreForHuman(depth){
     var winner = findWinner();
-    console.log("helloworld!!!!!!" + maxDepth);
+    //console.log("helloworld!!!!!!" + maxDepth);
         if (winner === "computer") {
             // computer is winning, so human is stuck
             return 10;
@@ -479,7 +501,7 @@ function isLegal(column){
 drawUpdate();
 
 function computerPlayer(){
-    console.log("Hi this is computer playing");
+    //console.log("Hi this is computer playing");
     dropPiece(0,bestMoveforComputer(),"computer");
 
 }
