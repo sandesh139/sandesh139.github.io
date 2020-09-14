@@ -11,6 +11,7 @@ const resetButton = document.getElementById('reset');
 
 const canvas = document.getElementById('drawing');
 const ctx = canvas.getContext('2d');
+const maxDepth = 7;
 
 var started = false;
 
@@ -19,14 +20,14 @@ var playerTurn = true;
 let score = 0;
 let playing = "pause";
 
-
+var foundWinner = false;
 
 
 const defaultHeight = canvas.height;
 const defaultWidth = canvas.width;
 
-var defaultRow = 4;
-var defaultCol = 6;
+var defaultRow = 8;
+var defaultCol = 8;
 
 var getRowHeight = defaultHeight/defaultRow;
 var getColWidth = defaultWidth/defaultCol;
@@ -45,7 +46,7 @@ var ovalProperty = {
     player: "none"
 }
 
-const ovals = [];
+var ovals = [];
 
 
 
@@ -86,8 +87,9 @@ submitButton.addEventListener('click', setBoard);
 resetButton.addEventListener('click', resetBoard);
 
 function setBoard(){
+    ovals = [];
     let test ="";
-    if(!started){
+    if(true){
     const inputRow = document.getElementById('rowInput').value;
     const inputCol = document.getElementById('colInput').value;
     
@@ -196,13 +198,11 @@ function drawOvals(){
 }
 
 function resetBoard(){
-    ovals.forEach(column =>{
-        column.forEach(eachOval => {
-            eachOval.empty = true;
-            eachOval.player = "none";
-        })
-    })
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ovals = [];
     started = false;
+    defaultCol = 8;
+    defaultRow = 8;
 }
 
 
@@ -222,16 +222,32 @@ canvas.addEventListener("mousemove", function(e) {
 canvas.addEventListener("click", clickHandle, false);
 
 function clickHandle(e){
+    var humanTime =true;
+    if(!foundWinner){
+    
     if(findWinner() === "human"){
+        drawOvals();
+        foundWinner = true;
         console.log("Human won");
+        alert("You won !");
+    } else if(findWinner() === "computer"){
+        drawOvals();
+        foundWinner = true;
+        console.log("computer won !");
+        alert("computer won !");
+    }
+    if(isFull()){
+        alert("Game is draw");
+        foundWinner =true;
     }
     let row,col;
     if(playerTurn){
         for(let i =0; i< defaultRow; i++){
             for(let j = 0; j< defaultCol; j++){
                 if(ovals[i][j].touched && ovals[i][j].empty){
-                    console.log(ovals[i][j].posX + " "+ ovals[i][j].posY);
+                    //console.log(ovals[i][j].posX + " "+ ovals[i][j].posY);
                     dropPiece(i,j,"human");
+                    humanTime =false;
                     //undoDrop(j); //this is working
                     
                 }
@@ -239,10 +255,30 @@ function clickHandle(e){
         }
    
 }
-    computerPlayer();
+    
     if(findWinner() === "human"){
+        drawOvals();
+        foundWinner = true;
         console.log("Human won");
+        alert("You won !");
+    } else if(findWinner() === "computer"){
+        drawOvals();
+        foundWinner = true;
+        console.log("computer won !");
+        alert("computer won !");
+
     }
+    if(!foundWinner &&! humanTime){
+        computerPlayer();
+    }
+    if(isFull()){
+        alert("Game is draw");
+        foundWinner =true;
+    }
+    // if(isfull()){
+    //     console.log("board is full");
+    // }
+}
 }
 
 function dropPiece(dropRow, dropCol, playerWho){
@@ -308,25 +344,116 @@ function findWinner(){
 }
 
 function bestMoveforComputer(){
-    var depth = 7;
+   
     var result = -20;
     var bestColumn = 0;
 
     for (var c=0; c<defaultCol;c++)
             if (isLegal(c)){
                 dropPiece(0,c,"computer");
-                var best = minScoreForHuman(board,maxDepth,1);
-                undoDrop(board,c);
-                if (best>=result){
-                    result = best;
+                var bests = minScoreForHuman(1);
+                undoDrop(c);
+                if (bests>=result){
+                    result = bests;
                     bestColumn=c;
                 }
             }
         // Hint: this will be similar to maxScoreForComputer
-        if(bestColumn === defaultCol -1){
-            bestColumn = Math.floor(Math.random() * defaultCol);
-        }
+        // if(bestColumn === defaultCol -1){
+        //     bestColumn = Math.floor(Math.random() * defaultCol);
+        // }
         return bestColumn;
+}
+
+function maxScoreForComputer(depth) {
+    // TODO You have to write this.
+
+    // Hint: this will be similar to minScoreForHuman
+    var winner = findWinner();
+    if (winner === "computer") {
+        return 10;
+    } else if (winner === "human") {
+        return -10;
+    } else if (isFull() || depth === maxDepth) {
+        return 0;
+    } else {
+        var bestResult = -20;
+        for (var c = 0; c < defaultCol; c++) {
+            if (isLegal(c)) {
+                dropPiece(0,c, "computer");
+                var result = minScoreForHuman(depth + 2);
+                undoDrop(c);
+                if (result >= bestResult) {
+                    bestResult = result;
+                }
+            }
+        }
+        return bestResult;
+    }
+}
+
+function minScoreForHuman(depth){
+    var winner = findWinner();
+    console.log("helloworld!!!!!!" + maxDepth);
+        if (winner === "computer") {
+            // computer is winning, so human is stuck
+            return 10;
+        } else if (winner === "human") {
+            // human already won, no chance for computer
+            return -10;
+        } else if (isFull() || (depth === maxDepth)) {
+            // We either have a tie (full board) or we've searched as
+            // far as we can go. Either way, call it a draw.
+            return 0;
+        } else {
+            // At this point, we know there isn't a winner already and
+            // that there must be at least one column still available
+            // for play. We'll search all possible moves for the human
+            // player and decide which one gives the lowest (best for
+            // human) score, assuming that the computer would play
+            // perfectly.
+
+            // Start off with a value for best result that is larger
+            // than any possible result.
+            var bestResult = 20;
+
+            // Loop over all columns to test them in turn.
+            for (var c = 0; c < defaultCol; c++) {
+                if (isLegal(c)) {
+                    // This column is a legal move. We'll drop a piece
+                    // there so we can see how good it is.
+                    dropPiece(0,c, "human");
+                    // Call maxScoreForComputer to see what the value would be for the
+                    // computer's best play. The maxScoreForComputer method will end
+                    // up calling minScoreForHuman in a similar fashion in order to
+                    // figure out the best result for the computer's
+                    // turn, assuming the human will play perfectly in
+                    // response.
+                    var result = maxScoreForComputer(depth + 2);
+                    // Now that we have the result, undo the drop so
+                    // the board will be like it was before.
+                    undoDrop(c);
+
+                    if (result <= bestResult) {
+                        // We've found a new best score. Remember it.
+                        bestResult = result;
+                    }
+                }
+            }
+            return bestResult;
+        }
+}
+
+
+ 
+
+function isFull(){
+    for (var i = 0; i < defaultCol; i++) {
+        if (ovals[0][i].empty) {
+            return false;
+        }
+    }
+    return true;
 }
 
 function undoDrop(column){
@@ -352,15 +479,16 @@ function isLegal(column){
 drawUpdate();
 
 function computerPlayer(){
-    console.log("Hi this is computer playeing");
+    console.log("Hi this is computer playing");
+    dropPiece(0,bestMoveforComputer(),"computer");
+
 }
 
 
 function drawUpdate(){
-
+    setTimeout(drawUpdate,300);
     draw();
-    
-    requestAnimationFrame(drawUpdate);
+    //requestAnimationFrame(drawUpdate);
    
 }
 
