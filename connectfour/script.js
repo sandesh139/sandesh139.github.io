@@ -160,6 +160,7 @@ function setBoard(){
 document.getElementById("valid").innerHTML = test;
 
 
+
 }
 
 
