@@ -7,6 +7,10 @@ const pauseButton = document.getElementById('pauseGame');
 const canvas = document.getElementById('drawing');
 const ctx = canvas.getContext('2d');
 
+
+
+
+
 let score = 0;
 let playing = "pause";
 const brickRowSize = 9;
@@ -14,6 +18,46 @@ const brickColSize = 5;
 
 
 
+const defaultHeight = canvas.height;
+const defaultWidth = canvas.width;
+
+const defaultRow = 6;
+const defaultCol = 5;
+
+const getRowHeight = defaultHeight/defaultRow;
+const getColWidth = defaultWidth/defaultCol;
+
+const rowOffSet = getRowHeight/8;
+const colOffSet = getColWidth/8;
+const actualWidth = getColWidth/2-colOffSet;
+const actuaHeight = getRowHeight/2 -rowOffSet;
+const ovalProperty = {
+    width: actualWidth,
+    height: actuaHeight,
+    offsetX: colOffSet,
+    offsetY: rowOffSet,
+    empty: true,
+    touched: false
+}
+
+const ovals = [];
+// for (let i = 0; i< defaultRow; i++){
+//     ovals[i] = [];
+//     for(let j = 0; j< defaultCol; j++){
+//         const x = j * (actualWidth*2 + colOffSet) +2*actualWidth;
+//         const y = i * (actuaHeight *2+ rowOffSet)+2*actuaHeight;
+//         ovals[i][j] = {x, y , ...ovalProperty}
+//     }
+// }
+
+for (let i = 0; i< defaultRow; i++){
+    ovals[i] = [];
+    for(let j = 0; j< defaultCol; j++){
+        const x = j * (ovalProperty.width*2 + ovalProperty.offsetX) +2*ovalProperty.width;
+        const y = i * (ovalProperty.height *2+ ovalProperty.offsetY)+2*ovalProperty.height;
+        ovals[i][j] = {x, y , ...ovalProperty}
+    }
+}
 
 
 //brick property
@@ -28,6 +72,11 @@ const brickProperty = {
 
 
 //paddle props
+
+const mouseLocation = {
+    x : 0,
+    y: 0
+}
 const paddle = {
     x: canvas.width /2 -30,
     y: canvas.height - 25,
@@ -93,7 +142,7 @@ function drawPaddle(){
 function drawBackground(){
     ctx.beginPath();
     ctx.rect(0,0,canvas.width, canvas.height);
-    ctx.fillStyle =  'yellow';
+    ctx.fillStyle =  '#A9A9A9';
     ctx.fill();
     ctx.closePath();
 }
@@ -114,12 +163,32 @@ for (let i = 0; i< brickRowSize; i++){
         bricks[i][j] = {x, y , ...brickProperty}
     }
 }
-function drawBricks(){
-    bricks.forEach(column => {
-        column.forEach(eachBrick =>{
+
+function drawOvals(){
+    ovals.forEach(column =>{
+        column.forEach(eachOval => {
+            if(eachOval.empty){
+                console.log("this is empty");
+                if(mouseLocation.x > eachOval.x - eachOval.width &&
+                    mouseLocation.x < eachOval.x + eachOval.width &&
+                    mouseLocation.y > eachOval.y -eachOval.height &&
+                    mouseLocation.y - ball.radius < eachOval.y + eachOval.height){
+                        eachOval.touched =true;
+                    }
+            }
+        })
+    })
+
+    ovals.forEach(column => {
+        column.forEach(eachOval =>{
             ctx.beginPath();
-            ctx.rect(eachBrick.x,eachBrick.y, eachBrick.width, eachBrick.height);
-            ctx.fillStyle = eachBrick.visible ? '#0095dd' : 'transparent';
+            ctx.ellipse(eachOval.x, eachOval.y, actualWidth, actuaHeight, 0, 0, 2 * Math.PI);
+            if(eachOval.touched){
+                ctx.fillStyle = 'red';
+            } else {
+                ctx.fillStyle = '#e6ffff';
+            }
+            
             ctx.fill();
             ctx.closePath();
         })
@@ -127,12 +196,18 @@ function drawBricks(){
 }
 
 
+
+
 canvas.addEventListener("mousemove", function(e) { 
     var cRect = canvas.getBoundingClientRect();        // Gets CSS pos, and width/height
-    var canvasX = Math.round(e.clientX - cRect.left);  // Subtract the 'left' of the canvas
+    var canvasX = Math.round(e.clientX - cRect.left);   // Subtract the 'left' of the canvas
+    var canvasY = Math.round(e.clientY - cRect.top);
+    mouseLocation.x = canvasX;
+    mouseLocation.y = canvasY;
     paddle.x = canvasX;
+    
+    //console.log(canvasX +"  "+ canvasY);
 });
-
 
 
 function moveBall(){
@@ -195,23 +270,25 @@ function drawAllBricks(){
     score =0;
 }
 
+function drawCircles(){
+    
+}
+
 //drawing the animation of canvas.
 draw();
 drawUpdate();
 function drawUpdate(){
-    if(playing === "play"){
-        draw();
-    }
+
+    draw();
+    // if(playing === "play"){
+    //     draw();
+    // }
     requestAnimationFrame(drawUpdate);
    
 }
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBackground();
-    moveBall();
-    drawPaddle();
-    drawBall();
-    labelScore();
-    drawBricks();
+    drawOvals();
     
 }

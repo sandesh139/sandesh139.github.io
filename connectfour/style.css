@@ -1,0 +1,135 @@
+* {
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #ddc1eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+}
+
+
+.testbutton {
+    font-family: arial;
+    font-weight: bold;
+    color: #FFFFFF !important;
+    font-size: 14px;
+    text-shadow: 1px 1px 0px #40BFC1;
+    box-shadow: 1px 1px 1px #40bfc1;
+    padding: 10px 25px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    border: 2px groove #40BFC1;
+    background: #63B8EE;
+    background: linear-gradient(top,  #40BFC1,  #468CCF);
+    background: -ms-linear-gradient(top,  #40BFC1,  #468CCF);
+    background: -webkit-gradient(linear, left top, left bottom, from(#40BFC1), to(#468CCF));
+    background: -moz-linear-gradient(top,  #40BFC1,  #468CCF);
+    
+  }
+  .testbutton:hover {
+    color: #14396A !important;
+    background: #468CCF;
+    background: linear-gradient(top,  #468CCF,  #63B8EE);
+    background: -ms-linear-gradient(top,  #468CCF,  #63B8EE);
+    background: -webkit-gradient(linear, left top, left bottom, from(#468CCF), to(#63B8EE));
+    background: -moz-linear-gradient(top,  #468CCF,  #63B8EE);
+  }
+
+h1 {
+    font-size: 45px;
+    color: #fff;
+}
+
+canvas{
+    background: #f0f0f0;
+    display: block;
+    border-radius: 5px;
+}
+
+.nav-bar{
+    height: 100px;
+    top:0;
+    position: sticky;
+}
+
+.topbar{
+    height: 100px;
+    background-color: black;
+    position: sticky;
+    top:0;
+    opacity: .5;
+}
+
+
+.buttonRules {
+    cursor: pointer;
+    border: 0;
+    padding: 10px 20px;
+    color:  rgb(185, 60, 216);
+    background:  rgb(24, 27, 27);;
+}
+
+.buttonRules:focus{
+    outline: 0;
+}
+
+.buttonRules:hover{
+    background: rgb(98, 202, 209);
+}
+
+.buttonRules:active{
+    transform: scale(.9);
+}
+
+.showRules{
+    position: absolute;
+    top: 30px;
+    left: 30px;
+}
+
+.homeRules{
+    position: absolute;
+    top: 30px;
+    left: 120px;
+}
+
+.playGame {
+    background-color: #5fc28d;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+
+.playGame:hover{
+    background: rgb(98, 202, 209);
+}
+.showInstructionRules{
+    position: absolute;
+    top:0;
+    left:0;
+    background: #333;
+    color: #fff;
+    min-height: 100vh;
+    width: 400px;
+    padding: 15px;
+    line-height: 1.5;
+    transform: translateX(-400px);
+    transition: transform 1s ease-in-out;
+}
+
+.showInstructionRules.show{
+    transform: translateX(0);
+}

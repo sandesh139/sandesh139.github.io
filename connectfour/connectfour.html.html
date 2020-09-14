@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect-Four</title>
+    <link rel = "stylesheet" href = "style.css">
+</head>
+<body>
+    <h1>Tile-Break</h1>
+    <button id ="showGameRules" class ="buttonRules showRules">Rules</button>
+    <button id ="playGame" class ="playGame">Play</button>
+    <button id ="pauseGame" class ="playGame">Pause</button>
+
+    <a class="btn" href="../index.html"><input class="buttonRules homeRules" type="button" value= "Home"/></a>
+    
+
+    <div id="styleRulesId" class="showInstructionRules">
+        <h3>Show the rules: </h3>
+        <p>
+            Connect your tiles four in a sequence to win the game.
+        </p>
+        <p>Sequence can be in horizontal, vertical or diagonal.</p>
+        <button id = "closeGameRules" class = "buttonRules">Close</button>
+
+    </div>
+    <canvas id = "drawing" width = "800" height ="600"></canvas>
+
+    <script src = "script.js"></script>
+</body>
+</html>
