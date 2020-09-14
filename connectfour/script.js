@@ -74,7 +74,16 @@ const mouseLocation = {
 }
 
 
-
+const movingTile = {
+    x: 0,
+    y: 0,
+    dy: 20,
+    targetY: 0,
+    playerWho: "none",
+    rowStarted: 0,
+    colStarted: 0,
+    visible: false
+}
 
 
 
@@ -255,7 +264,7 @@ canvas.addEventListener("click", clickHandle, false);
 function clickHandle(e){
     
     var humanTime =true;
-    if(!foundWinner){
+    if(!foundWinner && !movingTile.visible){
     
     if(findWinner() === "human"){
         drawOvals();
@@ -280,10 +289,16 @@ function clickHandle(e){
                 if(ovals[i][j].touched && ovals[i][j].empty){
                     //console.log(ovals[i][j].posX + " "+ ovals[i][j].posY);
                     if(turnCounter %2 == 0){
-                        dropPiece(i,j,"human");
+                        dropPieceMove(i,j,"human");
+                        movingTile.rowStarted = i;
+                        movingTile.colStarted = j;
+                        //dropPiece(i,j, "human");
                         turnCounter++;
                     } else if(!computerPlaying) {
-                        dropPiece(i,j,"computer");
+                        dropPieceMove(i,j,"computer");
+                        movingTile.rowStarted = i;
+                        movingTile.colStarted = j;
+                        //dropPiece(i,j, "computer");
                         turnCounter++;
                     }
                     started = true;
@@ -310,6 +325,8 @@ function clickHandle(e){
     }
     if(!foundWinner &&! humanTime && computerPlaying){
         computerPlayer();
+        console.log("this countcall : " + countCall);
+        countCall = 0;
         turnCounter++;
     }
     if(isFull()){
@@ -334,18 +351,89 @@ function dropPiece(dropRow, dropCol, playerWho){
     //console.log("this is i" + i);
     ovals[i][j].empty = false;
     ovals[i][j].player = playerWho;
-    //playerTurn= false;
+    playerTurn= false;
+    
 
 }
 
+function dropPieceMove(dropRow, dropCol, playerWho){
+    i = dropRow;
+    j = dropCol;
+    while(i+1< defaultRow){
+        if(!ovals[i+1][j].empty){
+            break;
+        }
+        i++;
+    }
+    //console.log("this is i" + i);
+    // ovals[i][j].empty = false;
+    // ovals[i][j].player = playerWho;
+    //playerTurn= false;
+    clearTimeout(timer);
+    movingTile.x = ovals[dropRow][dropCol].x;
+    movingTile.y = ovals[dropRow][dropCol].y;
+    movingTile.visible = true;
+    movingTile.targetY = (ovals[i][dropCol].y);
+    movingTile.playerWho = playerWho;
+    movePiece();
+}
+
+var completedMove = false;
+
+
+function movePiece(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBackground();
+    
+    timer = setTimeout(movePiece,200);
+    
+    movingTile.y +=movingTile.dy;
+
+    ovals.forEach(column => {
+        column.forEach(eachOval =>{
+            ctx.beginPath();
+            ctx.ellipse(eachOval.x, eachOval.y, actualWidth, actuaHeight, 0, 0, 2 * Math.PI);
+            if(eachOval.empty) {
+                ctx.fillStyle = '#e6ffff';
+            } else if (eachOval.player === "human"){
+                ctx.fillStyle = 'red';
+            } else if (eachOval.player === "computer"){
+                ctx.fillStyle = 'blue';
+            }
+
+           
+            
+            ctx.fill();
+            ctx.closePath();
+        })
+    })
+    ctx.beginPath();
+    ctx.ellipse(movingTile.x, movingTile.y, actualWidth, actuaHeight, 0, 0, 2 * Math.PI);
+    if(movingTile.playerWho === "human"){
+        ctx.fillStyle = 'red';
+    } else if (movingTile.playerWho === "computer"){
+        ctx.fillStyle = 'blue';
+    }
+    ctx.fill();
+    ctx.closePath();
+    
+    if(movingTile.y+30>movingTile.targetY){
+        clearTimeout(timer);
+        dropPiece(movingTile.rowStarted, movingTile.colStarted, movingTile.playerWho);
+        movingTile.visible = false;
+        drawUpdate();
+    } 
+}
+
+
 function findLocalWinner(r,c,rowOffSet,colOffSet){
-    var x = r;
-    var y = c;
-    var player = ovals[r][c].player;
-    var i = 1;
-    var localWinner = false;
-    var a = 0;
-    var isEmpty = ovals[r][c].empty;
+    let x = r;
+    let y = c;
+    let player = ovals[r][c].player;
+    let i = 1;
+    let localWinner = false;
+    let a = 0;
+    let isEmpty = ovals[r][c].empty;
     if(!isEmpty){
     while (i<5 && x>=0&&x<defaultRow &&y>=0 &&y<defaultCol ) {
         if (ovals[x][y].player===player) {
@@ -386,13 +474,14 @@ function findWinner(){
 
 function bestMoveforComputer(){
    
-    var result = -20;
-    var bestColumn = 0;
+    let result = -20;
+    let bestColumn = 0;
 
-    for (var c=0; c<defaultCol;c++)
+    for (let c=0; c<defaultCol;c++)
             if (isLegal(c)){
                 dropPiece(0,c,"computer");
-                var bests = minScoreForHuman(1);
+                let bests = -20;
+                bests = minScoreForHuman(1);
                 undoDrop(c);
                 if (bests>=result){
                     result = bests;
@@ -405,12 +494,14 @@ function bestMoveforComputer(){
         // }
         return bestColumn;
 }
+var countCall = 0;
 
 function maxScoreForComputer(depth) {
+    countCall++;
     // TODO You have to write this.
 
     // Hint: this will be similar to minScoreForHuman
-    var winner = findWinner();
+    let winner = findWinner();
     if (winner === "computer") {
         return 10;
     } else if (winner === "human") {
@@ -418,11 +509,12 @@ function maxScoreForComputer(depth) {
     } else if (isFull() || depth === maxDepth) {
         return 0;
     } else {
-        var bestResult = -20;
-        for (var c = 0; c < defaultCol; c++) {
+        let bestResult = -20;
+        for (let c = 0; c < defaultCol; c++) {
             if (isLegal(c)) {
                 dropPiece(0,c, "computer");
-                var result = minScoreForHuman(depth + 2);
+                let result = -20;
+                result =minScoreForHuman(depth + 2);
                 undoDrop(c);
                 if (result >= bestResult) {
                     bestResult = result;
@@ -434,7 +526,7 @@ function maxScoreForComputer(depth) {
 }
 
 function minScoreForHuman(depth){
-    var winner = findWinner();
+    let winner = findWinner();
     //console.log("helloworld!!!!!!" + maxDepth);
         if (winner === "computer") {
             // computer is winning, so human is stuck
@@ -447,36 +539,20 @@ function minScoreForHuman(depth){
             // far as we can go. Either way, call it a draw.
             return 0;
         } else {
-            // At this point, we know there isn't a winner already and
-            // that there must be at least one column still available
-            // for play. We'll search all possible moves for the human
-            // player and decide which one gives the lowest (best for
-            // human) score, assuming that the computer would play
-            // perfectly.
-
-            // Start off with a value for best result that is larger
-            // than any possible result.
-            var bestResult = 20;
+           
+            let bestResult = 20;
 
             // Loop over all columns to test them in turn.
-            for (var c = 0; c < defaultCol; c++) {
+            for (let c = 0; c < defaultCol; c++) {
                 if (isLegal(c)) {
-                    // This column is a legal move. We'll drop a piece
-                    // there so we can see how good it is.
+                   
                     dropPiece(0,c, "human");
-                    // Call maxScoreForComputer to see what the value would be for the
-                    // computer's best play. The maxScoreForComputer method will end
-                    // up calling minScoreForHuman in a similar fashion in order to
-                    // figure out the best result for the computer's
-                    // turn, assuming the human will play perfectly in
-                    // response.
-                    var result = maxScoreForComputer(depth + 2);
-                    // Now that we have the result, undo the drop so
-                    // the board will be like it was before.
+                    
+                    let result = maxScoreForComputer(depth + 1);
+                    
                     undoDrop(c);
 
                     if (result <= bestResult) {
-                        // We've found a new best score. Remember it.
                         bestResult = result;
                     }
                 }
@@ -489,7 +565,7 @@ function minScoreForHuman(depth){
  
 
 function isFull(){
-    for (var i = 0; i < defaultCol; i++) {
+    for (let i = 0; i < defaultCol; i++) {
         if (ovals[0][i].empty) {
             return false;
         }
@@ -498,7 +574,7 @@ function isFull(){
 }
 
 function undoDrop(column){
-    var row = 0;
+    let row = 0;
         while(ovals[row][column].empty && row < defaultRow) {
             row++;
         }
@@ -524,10 +600,11 @@ function computerPlayer(){
     dropPiece(0,bestMoveforComputer(),"computer");
 
 }
-
+var timer;
 
 function drawUpdate(){
-    setTimeout(drawUpdate,200);
+    timer = setTimeout(drawUpdate,200);
+    
     draw();
     //requestAnimationFrame(drawUpdate);
    
