@@ -263,7 +263,7 @@ canvas.addEventListener("click", clickHandle, false);
 
 function clickHandle(e){
     
-    var humanTime =true;
+    
     if(!foundWinner && !movingTile.visible){
     
     if(findWinner() === "human"){
@@ -282,6 +282,7 @@ function clickHandle(e){
         alert("Game is draw");
         foundWinner =true;
     }
+    
     let row,col;
     if(playerTurn || !computerPlaying){
         for(let i =0; i< defaultRow; i++){
@@ -290,15 +291,16 @@ function clickHandle(e){
                     //console.log(ovals[i][j].posX + " "+ ovals[i][j].posY);
                     if(turnCounter %2 == 0){
                         dropPieceMove(i,j,"human");
+                       
                         movingTile.rowStarted = i;
                         movingTile.colStarted = j;
-                        //dropPiece(i,j, "human");
+                       
                         turnCounter++;
                     } else if(!computerPlaying) {
                         dropPieceMove(i,j,"computer");
                         movingTile.rowStarted = i;
                         movingTile.colStarted = j;
-                        //dropPiece(i,j, "computer");
+                        
                         turnCounter++;
                     }
                     started = true;
@@ -310,6 +312,8 @@ function clickHandle(e){
         }
    
 }
+
+
     
     if(findWinner() === "human"){
         drawOvals();
@@ -323,21 +327,29 @@ function clickHandle(e){
         alert("Blue  won !");
 
     }
-    if(!foundWinner &&! humanTime && computerPlaying){
-        computerPlayer();
-        console.log("this countcall : " + countCall);
-        countCall = 0;
-        turnCounter++;
-    }
+    
+    
+    // if(!foundWinner &&!humanTime && computerPlaying){
+    //     //computerPlayer();
+    //     drawUpdate();
+    //     console.log("this countcall : " + countCall);
+    //     countCall = 0;
+    //     turnCounter++;
+    // }
+
     if(isFull()){
         alert("Game is draw");
         foundWinner =true;
     }
+    //drawUpdate();
     // if(isfull()){
     //     console.log("board is full");
     // }
 }
 }
+
+
+
 
 function dropPiece(dropRow, dropCol, playerWho){
     i = dropRow;
@@ -381,7 +393,7 @@ function dropPieceMove(dropRow, dropCol, playerWho){
 var completedMove = false;
 
 
-function movePiece(){
+async function movePiece(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBackground();
     
@@ -421,6 +433,9 @@ function movePiece(){
         clearTimeout(timer);
         dropPiece(movingTile.rowStarted, movingTile.colStarted, movingTile.playerWho);
         movingTile.visible = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBackground();
+        drawOvals();
         drawUpdate();
     } 
 }
@@ -472,7 +487,7 @@ function findWinner(){
     return null;
 }
 
-function bestMoveforComputer(){
+async function bestMoveforComputer(){
    
     let result = -20;
     let bestColumn = 0;
@@ -481,7 +496,7 @@ function bestMoveforComputer(){
             if (isLegal(c)){
                 dropPiece(0,c,"computer");
                 let bests = -20;
-                bests = minScoreForHuman(1);
+                bests = await minScoreForHuman(1);
                 undoDrop(c);
                 if (bests>=result){
                     result = bests;
@@ -496,7 +511,7 @@ function bestMoveforComputer(){
 }
 var countCall = 0;
 
-function maxScoreForComputer(depth) {
+async function maxScoreForComputer(depth) {
     countCall++;
     // TODO You have to write this.
 
@@ -514,7 +529,7 @@ function maxScoreForComputer(depth) {
             if (isLegal(c)) {
                 dropPiece(0,c, "computer");
                 let result = -20;
-                result =minScoreForHuman(depth + 2);
+                result = await minScoreForHuman(depth + 2);
                 undoDrop(c);
                 if (result >= bestResult) {
                     bestResult = result;
@@ -525,7 +540,7 @@ function maxScoreForComputer(depth) {
     }
 }
 
-function minScoreForHuman(depth){
+async function minScoreForHuman(depth){
     let winner = findWinner();
     //console.log("helloworld!!!!!!" + maxDepth);
         if (winner === "computer") {
@@ -548,7 +563,7 @@ function minScoreForHuman(depth){
                    
                     dropPiece(0,c, "human");
                     
-                    let result = maxScoreForComputer(depth + 1);
+                    let result = await maxScoreForComputer(depth + 1);
                     
                     undoDrop(c);
 
@@ -595,12 +610,44 @@ function isLegal(column){
 //drawing the animation of canvas.
 drawUpdate();
 
+
 function computerPlayer(){
+    console.log(computerPlaying+" "+ movingTile.visible + " "+turnCounter%2 );
+    if(findWinner() === "human"){
+        drawOvals();
+        foundWinner = true;
+        
+        alert("Red won !");
+    } else if(findWinner() === "computer"){
+        drawOvals();
+        foundWinner = true;
+        console.log("computer won !");
+        alert("Blue  won !");
+
+    }
+
+    if(!foundWinner && computerPlaying && !movingTile.visible && turnCounter%2 ===1){
+        dropPiece(0,bestMoveforComputer(),"computer");
+        //computerPlayer();
+        //drawUpdate();
+        console.log("this countcall : " + countCall);
+        countCall = 0;
+        turnCounter++;
+        movingTile.visible = false;
+        playerTurn =true;
+    }
     //console.log("Hi this is computer playing");
-    dropPiece(0,bestMoveforComputer(),"computer");
+    if(!foundWinner){
+        window.setTimeout(computerPlayer,1000);
+    }
+    
 
 }
 var timer;
+
+//var computertimer =setTimeout(computerPlayer, 500);
+window.setTimeout(computerPlayer,1000);
+//computertimer= setTimeout(computerPlayer,500);
 
 function drawUpdate(){
     timer = setTimeout(drawUpdate,200);
