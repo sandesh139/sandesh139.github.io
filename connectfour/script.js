@@ -188,10 +188,10 @@ function drawOvals(){
         column.forEach(eachOval => {
             if(eachOval.empty){
                 
-                if(mouseLocation.x > eachOval.x - eachOval.width + 3 &&
-                    mouseLocation.x < eachOval.x + eachOval.width - 3 &&
-                    mouseLocation.y > eachOval.y -eachOval.height + 3  &&
-                    mouseLocation.y  < eachOval.y + eachOval.height -3 ){
+                if(mouseLocation.x > eachOval.x - eachOval.width  &&
+                    mouseLocation.x < eachOval.x + eachOval.width &&
+                    mouseLocation.y > eachOval.y -eachOval.height  &&
+                    mouseLocation.y  < eachOval.y + eachOval.height ){
                         eachOval.touched =true;
                     } else {
                         eachOval.touched = false;
@@ -204,7 +204,7 @@ function drawOvals(){
         column.forEach(eachOval =>{
             ctx.beginPath();
             ctx.ellipse(eachOval.x, eachOval.y, actualWidth, actuaHeight, 0, 0, 2 * Math.PI);
-            if(eachOval.touched && eachOval.empty){
+            if(eachOval.touched && eachOval.empty && !foundWinner){
                 if(turnCounter % 2 == 0){
                     ctx.fillStyle = 'red';
                 } else if(turnCounter % 2 == 1) {
@@ -266,18 +266,22 @@ function clickHandle(e){
                 if(ovals[i][j].touched && ovals[i][j].empty){
                     //console.log(ovals[i][j].posX + " "+ ovals[i][j].posY);
                     if(turnCounter %2 == 0){
-                        dropPieceMove(i,j,"human");
+                        
                        
                         movingTile.rowStarted = i;
                         movingTile.colStarted = j;
+                        dropPieceMove(i,j,"human");
                        
                         turnCounter++;
                         //computerPlaying = true;
                         
                     } else if(!computerPlaying) {
-                        dropPieceMove(i,j,"computer");
+                        
+
                         movingTile.rowStarted = i;
                         movingTile.colStarted = j;
+
+                        dropPieceMove(i,j,"computer");
                         
                         turnCounter++;
                     }
@@ -320,8 +324,11 @@ function checkEndGame(){
 
 
 function dropPiece(dropRow, dropCol, playerWho){
-    i = dropRow;
-    j = dropCol;
+    let i = dropRow;
+    let j = dropCol;
+    if(i<0){
+        i = 0;
+    }
     while(i+1< defaultRow){
         if(!ovals[i+1][j].empty){
             break;
@@ -337,8 +344,8 @@ function dropPiece(dropRow, dropCol, playerWho){
 }
 
 function dropPieceMove(dropRow, dropCol, playerWho){
-    i = dropRow;
-    j = dropCol;
+    let i = dropRow;
+    let j = dropCol;
     while(i+1< defaultRow){
         if(!ovals[i+1][j].empty){
             break;
@@ -353,6 +360,8 @@ function dropPieceMove(dropRow, dropCol, playerWho){
     movingTile.targetY = (ovals[i][dropCol].y);
     movingTile.playerWho = playerWho;
     movePiece();
+    //ovals[i][j].empty = false;
+    //ovals[i][j].player = playerWho;
 }
 
 var completedMove = false;
@@ -394,7 +403,7 @@ async function movePiece(){
     
     if(movingTile.y+30>movingTile.targetY){
         clearTimeout(timer);
-        dropPiece(movingTile.rowStarted, movingTile.colStarted, movingTile.playerWho);
+        dropPiece(movingTile.rowStarted-2, movingTile.colStarted, movingTile.playerWho);
         movingTile.visible = false;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawBackground();
@@ -592,7 +601,7 @@ function computerPlayer(){
         playerTurn =true;
     }
     //console.log("Hi this is computer playing");
-    if(!foundWinner){
+    if(!foundWinner && computerPlaying){
         window.setTimeout(computerPlayer,1000);
     }
     
