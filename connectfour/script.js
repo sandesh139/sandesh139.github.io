@@ -536,6 +536,7 @@ function maxScoreForComputer(depth) {
                 }
             }
         }
+        console.log("maxscore :"+ bestResult);
         return bestResult;
     }
 }
@@ -563,7 +564,7 @@ function minScoreForHuman(depth){
                    
                     dropPiece(0,c, "human");
                     
-                    let result = maxScoreForComputer(depth + 1);
+                    let result = maxScoreForComputer(depth + 2);
                     
                     undoDrop(c);
 
@@ -572,6 +573,7 @@ function minScoreForHuman(depth){
                     }
                 }
             }
+            console.log("minscore :"+ bestResult);
             return bestResult;
         }
 }
@@ -612,16 +614,15 @@ drawUpdate();
 
 
 function computerPlayer(){
-    console.log(computerPlaying+" "+ movingTile.visible + " "+turnCounter%2 );
+    //console.log(computerPlaying+" "+ movingTile.visible + " "+turnCounter%2 );
     if(findWinner() === "human"){
         drawOvals();
         foundWinner = true;
-        
         alert("Red won !");
     } else if(findWinner() === "computer"){
         drawOvals();
         foundWinner = true;
-        console.log("computer won !");
+        //console.log("computer won !");
         alert("Blue  won !");
 
     }
