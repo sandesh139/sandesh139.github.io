@@ -85,9 +85,6 @@ const movingTile = {
     visible: false
 }
 
-
-
-
 //showing and hiding the instruction
 showRulesButton.addEventListener('click', () =>
     showRulesInstruction.classList.add('show'));
@@ -167,15 +164,7 @@ function setBoard(){
 }
 
 document.getElementById("valid").innerHTML = test;
-
-
-
 }
-
-
-
-//playButton.addEventListener('click', startGame);
-
 
 
 function drawBackground(){
@@ -255,8 +244,6 @@ canvas.addEventListener("mousemove", function(e) {
     mouseLocation.x = canvasX;
     mouseLocation.y = canvasY;
     
-    
-    //console.log(canvasX +"  "+ canvasY);
 });
 
 canvas.addEventListener("click", clickHandle, false);
@@ -266,18 +253,7 @@ function clickHandle(e){
     
     if(!foundWinner && !movingTile.visible){
     
-    if(findWinner() === "human"){
-        drawOvals();
-        foundWinner = true;
-        console.log("Red won");
-        alert("Red won !");
-    } else if(findWinner() === "computer"){
-        drawOvals();
-        foundWinner = true;
-        
-        alert("Blue won !");
-        
-    }
+    checkEndGame();
     if(isFull()){
         alert("Game is draw");
         foundWinner =true;
@@ -316,7 +292,17 @@ function clickHandle(e){
 }
 
 
+    checkEndGame();
     
+
+    if(isFull()){
+        alert("Game is draw");
+        foundWinner =true;
+    }
+}
+}
+
+function checkEndGame(){
     if(findWinner() === "human"){
         drawOvals();
         foundWinner = true;
@@ -329,27 +315,7 @@ function clickHandle(e){
         alert("Blue  won !");
 
     }
-    
-    
-    // if(!foundWinner &&!humanTime && computerPlaying){
-    //     //computerPlayer();
-    //     drawUpdate();
-    //     console.log("this countcall : " + countCall);
-    //     countCall = 0;
-    //     turnCounter++;
-    // }
-
-    if(isFull()){
-        alert("Game is draw");
-        foundWinner =true;
-    }
-    //drawUpdate();
-    // if(isfull()){
-    //     console.log("board is full");
-    // }
 }
-}
-
 
 
 
@@ -379,10 +345,7 @@ function dropPieceMove(dropRow, dropCol, playerWho){
         }
         i++;
     }
-    //console.log("this is i" + i);
-    // ovals[i][j].empty = false;
-    // ovals[i][j].player = playerWho;
-    //playerTurn= false;
+    
     clearTimeout(timer);
     movingTile.x = ovals[dropRow][dropCol].x;
     movingTile.y = ovals[dropRow][dropCol].y;
@@ -415,8 +378,6 @@ async function movePiece(){
                 ctx.fillStyle = 'blue';
             }
 
-           
-            
             ctx.fill();
             ctx.closePath();
         })
@@ -505,10 +466,7 @@ function bestMoveforComputer(){
                     bestColumn=c;
                 }
             }
-        // Hint: this will be similar to maxScoreForComputer
-        // if(bestColumn === defaultCol -1){
-        //     bestColumn = Math.floor(Math.random() * defaultCol);
-        // }
+        
         return bestColumn;
 }
 var countCall = 0;
@@ -617,17 +575,7 @@ drawUpdate();
 
 function computerPlayer(){
     console.log(computerPlaying+" "+ movingTile.visible + " "+turnCounter%2 );
-    if(findWinner() === "human"){
-        drawOvals();
-        foundWinner = true;
-        alert("Red won !");
-    } else if(findWinner() === "computer"){
-        drawOvals();
-        foundWinner = true;
-        //console.log("computer won !");
-        alert("Blue  won !");
-
-    }
+    checkEndGame();
 
     if(!foundWinner && computerPlaying && !movingTile.visible && turnCounter%2 ===1){
         var bestCol = bestMoveforComputer();
@@ -641,9 +589,7 @@ function computerPlayer(){
         countCall = 0;
         console.log(turnCounter+ " : turn counter");
         turnCounter++;
-      
         playerTurn =true;
-        
     }
     //console.log("Hi this is computer playing");
     if(!foundWinner){
