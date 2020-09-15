@@ -296,6 +296,8 @@ function clickHandle(e){
                         movingTile.colStarted = j;
                        
                         turnCounter++;
+                        //computerPlaying = true;
+                        
                     } else if(!computerPlaying) {
                         dropPieceMove(i,j,"computer");
                         movingTile.rowStarted = i;
@@ -304,7 +306,7 @@ function clickHandle(e){
                         turnCounter++;
                     }
                     started = true;
-                    humanTime =false;
+                   
                     //undoDrop(j); //this is working
                     
                 }
@@ -363,7 +365,7 @@ function dropPiece(dropRow, dropCol, playerWho){
     //console.log("this is i" + i);
     ovals[i][j].empty = false;
     ovals[i][j].player = playerWho;
-    playerTurn= false;
+    //playerTurn= false;
     
 
 }
@@ -512,7 +514,7 @@ function bestMoveforComputer(){
 var countCall = 0;
 
 function maxScoreForComputer(depth) {
-    countCall++;
+    //countCall++;
     // TODO You have to write this.
 
     // Hint: this will be similar to minScoreForHuman
@@ -536,7 +538,7 @@ function maxScoreForComputer(depth) {
                 }
             }
         }
-        console.log("maxscore :"+ bestResult);
+        //console.log("maxscore :"+ bestResult);
         return bestResult;
     }
 }
@@ -573,7 +575,7 @@ function minScoreForHuman(depth){
                     }
                 }
             }
-            console.log("minscore :"+ bestResult);
+            //console.log("minscore :"+ bestResult);
             return bestResult;
         }
 }
@@ -614,7 +616,7 @@ drawUpdate();
 
 
 function computerPlayer(){
-    //console.log(computerPlaying+" "+ movingTile.visible + " "+turnCounter%2 );
+    console.log(computerPlaying+" "+ movingTile.visible + " "+turnCounter%2 );
     if(findWinner() === "human"){
         drawOvals();
         foundWinner = true;
@@ -628,14 +630,20 @@ function computerPlayer(){
     }
 
     if(!foundWinner && computerPlaying && !movingTile.visible && turnCounter%2 ===1){
-        dropPiece(0,bestMoveforComputer(),"computer");
+        var bestCol = bestMoveforComputer();
+        dropPieceMove(0,bestCol,"computer");
+        movingTile.rowStarted = 0;
+        movingTile.colStarted = bestCol;
+        movingTile.visible = false;
         //computerPlayer();
         //drawUpdate();
         console.log("this countcall : " + countCall);
         countCall = 0;
+        console.log(turnCounter+ " : turn counter");
         turnCounter++;
-        movingTile.visible = false;
+      
         playerTurn =true;
+        
     }
     //console.log("Hi this is computer playing");
     if(!foundWinner){
