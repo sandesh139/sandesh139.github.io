@@ -487,7 +487,7 @@ function findWinner(){
     return null;
 }
 
-async function bestMoveforComputer(){
+function bestMoveforComputer(){
    
     let result = -20;
     let bestColumn = 0;
@@ -496,7 +496,7 @@ async function bestMoveforComputer(){
             if (isLegal(c)){
                 dropPiece(0,c,"computer");
                 let bests = -20;
-                bests = await minScoreForHuman(1);
+                bests = minScoreForHuman(1);
                 undoDrop(c);
                 if (bests>=result){
                     result = bests;
@@ -511,7 +511,7 @@ async function bestMoveforComputer(){
 }
 var countCall = 0;
 
-async function maxScoreForComputer(depth) {
+function maxScoreForComputer(depth) {
     countCall++;
     // TODO You have to write this.
 
@@ -529,7 +529,7 @@ async function maxScoreForComputer(depth) {
             if (isLegal(c)) {
                 dropPiece(0,c, "computer");
                 let result = -20;
-                result = await minScoreForHuman(depth + 2);
+                result = minScoreForHuman(depth + 2);
                 undoDrop(c);
                 if (result >= bestResult) {
                     bestResult = result;
@@ -540,7 +540,7 @@ async function maxScoreForComputer(depth) {
     }
 }
 
-async function minScoreForHuman(depth){
+function minScoreForHuman(depth){
     let winner = findWinner();
     //console.log("helloworld!!!!!!" + maxDepth);
         if (winner === "computer") {
@@ -563,7 +563,7 @@ async function minScoreForHuman(depth){
                    
                     dropPiece(0,c, "human");
                     
-                    let result = await maxScoreForComputer(depth + 1);
+                    let result = maxScoreForComputer(depth + 1);
                     
                     undoDrop(c);
 
@@ -646,7 +646,7 @@ function computerPlayer(){
 var timer;
 
 //var computertimer =setTimeout(computerPlayer, 500);
-window.setTimeout(computerPlayer,1000);
+window.setTimeout(computerPlayer,2000);
 //computertimer= setTimeout(computerPlayer,500);
 
 function drawUpdate(){
