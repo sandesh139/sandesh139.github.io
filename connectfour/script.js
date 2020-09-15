@@ -338,6 +338,11 @@ function dropPiece(dropRow, dropCol, playerWho){
     //console.log("this is i" + i);
     ovals[i][j].empty = false;
     ovals[i][j].player = playerWho;
+    if(playerWho === "computer"){
+        playerTurn = true;
+    } else {
+        playerTurn = false;
+    }
     //playerTurn= false;
     
 
@@ -587,6 +592,7 @@ function computerPlayer(){
     checkEndGame();
 
     if(!foundWinner && computerPlaying && !movingTile.visible && turnCounter%2 ===1){
+        playerTurn =false;
         var bestCol = bestMoveforComputer();
         dropPieceMove(0,bestCol,"computer");
         movingTile.rowStarted = 0;
@@ -598,7 +604,7 @@ function computerPlayer(){
         countCall = 0;
         console.log(turnCounter+ " : turn counter");
         turnCounter++;
-        playerTurn =true;
+        //playerTurn =true;
     }
     //console.log("Hi this is computer playing");
     if(!foundWinner && computerPlaying){
