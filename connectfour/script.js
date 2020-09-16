@@ -296,7 +296,7 @@ function clickHandle(e){
 }
 
 
-    checkEndGame();
+    //checkEndGame();
     
 
     if(isFull()){
@@ -304,21 +304,25 @@ function clickHandle(e){
         foundWinner =true;
     }
 }
+checkEndGame();
 }
 
 function checkEndGame(){
     if(findWinner() === "human"){
         drawOvals();
         foundWinner = true;
-        
         alert("Red won !");
+        clearTimeout(timer);
+        
     } else if(findWinner() === "computer"){
         drawOvals();
         foundWinner = true;
         console.log("computer won !");
         alert("Blue  won !");
+        clearTimeout(timer);
 
     }
+    
 }
 
 
