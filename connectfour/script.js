@@ -253,7 +253,7 @@ function clickHandle(e){
     
     if(!foundWinner && !movingTile.visible){
     
-    checkEndGame();
+    //checkEndGame();
     if(isFull()){
         alert("Game is draw");
         foundWinner =true;
@@ -273,6 +273,7 @@ function clickHandle(e){
                         dropPieceMove(i,j,"human");
                        
                         turnCounter++;
+                        //checkEndGame();
                         //computerPlaying = true;
                         
                     } else if(!computerPlaying) {
@@ -282,6 +283,7 @@ function clickHandle(e){
                         movingTile.colStarted = j;
 
                         dropPieceMove(i,j,"computer");
+                        //checkEndGame();
                         
                         turnCounter++;
                     }
@@ -304,27 +306,35 @@ function clickHandle(e){
         foundWinner =true;
     }
 }
-checkEndGame();
+
 }
 
+
+var callOneTime = true;
 function checkEndGame(){
     if(findWinner() === "human"){
         drawOvals();
         foundWinner = true;
-        alert("Red won !");
+        
+        callOneTime = false;
         clearTimeout(timer);
+        alert("Red won !");
         
     } else if(findWinner() === "computer"){
         drawOvals();
         foundWinner = true;
         console.log("computer won !");
-        alert("Blue  won !");
+        callOneTime =false;
         clearTimeout(timer);
+        alert("Blue  won !");
 
+    }
+    if(callOneTime){
+        window.setTimeout(checkEndGame,600);
     }
     
 }
-
+window.setTimeout(checkEndGame,600);
 
 
 function dropPiece(dropRow, dropCol, playerWho){
@@ -417,8 +427,10 @@ async function movePiece(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawBackground();
         drawOvals();
+        //checkEndGame();
         drawUpdate();
-    } 
+    }
+
 }
 
 
@@ -593,7 +605,7 @@ drawUpdate();
 
 function computerPlayer(){
     console.log(computerPlaying+" "+ movingTile.visible + " "+turnCounter%2 );
-    checkEndGame();
+    //checkEndGame();
 
     if(!foundWinner && computerPlaying && !movingTile.visible && turnCounter%2 ===1){
         playerTurn =false;
@@ -621,6 +633,7 @@ var timer;
 
 //var computertimer =setTimeout(computerPlayer, 500);
 window.setTimeout(computerPlayer,2000);
+
 //computertimer= setTimeout(computerPlayer,500);
 
 function drawUpdate(){
