@@ -6,7 +6,7 @@ const submitButton = document.getElementById('submission');
 
 const resetButton = document.getElementById('reset');
 
-const computerButton = document.getElementById('computer');
+//const computerButton = document.getElementById('computer');
 
 // const pauseButton = document.getElementById('pauseGame');
 
@@ -96,7 +96,7 @@ submitButton.addEventListener('click', setBoard);
 
 resetButton.addEventListener('click', resetBoard);
 
-computerButton.addEventListener('click', setComputer);
+//computerButton.addEventListener('click', setComputer);
 
 function setComputer(){
     if(!started){
