@@ -6,7 +6,7 @@ const submitButton = document.getElementById('submission');
 
 const resetButton = document.getElementById('reset');
 
-//const computerButton = document.getElementById('computer');
+const computerButton = document.getElementById('computer');
 
 // const pauseButton = document.getElementById('pauseGame');
 
@@ -96,7 +96,7 @@ submitButton.addEventListener('click', setBoard);
 
 resetButton.addEventListener('click', resetBoard);
 
-//computerButton.addEventListener('click', setComputer);
+computerButton.addEventListener('click', setComputer);
 
 function setComputer(){
     if(!started){
@@ -480,93 +480,6 @@ function findWinner(){
     return null;
 }
 
-function bestMoveforComputer(){
-   
-    let result = -20;
-    let bestColumn = 0;
-
-    for (let c=0; c<defaultCol;c++)
-            if (isLegal(c)){
-                dropPiece(0,c,"computer");
-                let bests = -20;
-                bests = minScoreForHuman(1);
-                undoDrop(c);
-                if (bests>=result){
-                    result = bests;
-                    bestColumn=c;
-                }
-            }
-        
-        return bestColumn;
-}
-var countCall = 0;
-
-function maxScoreForComputer(depth) {
-    //countCall++;
-    // TODO You have to write this.
-
-    // Hint: this will be similar to minScoreForHuman
-    let winner = findWinner();
-    if (winner === "computer") {
-        return 10;
-    } else if (winner === "human") {
-        return -10;
-    } else if (isFull() || depth === maxDepth) {
-        return 0;
-    } else {
-        let bestResult = -20;
-        for (let c = 0; c < defaultCol; c++) {
-            if (isLegal(c)) {
-                dropPiece(0,c, "computer");
-                let result = -20;
-                result = minScoreForHuman(depth + 2);
-                undoDrop(c);
-                if (result >= bestResult) {
-                    bestResult = result;
-                }
-            }
-        }
-        //console.log("maxscore :"+ bestResult);
-        return bestResult;
-    }
-}
-
-function minScoreForHuman(depth){
-    let winner = findWinner();
-    //console.log("helloworld!!!!!!" + maxDepth);
-        if (winner === "computer") {
-            // computer is winning, so human is stuck
-            return 10;
-        } else if (winner === "human") {
-            // human already won, no chance for computer
-            return -10;
-        } else if (isFull() || (depth === maxDepth)) {
-            // We either have a tie (full board) or we've searched as
-            // far as we can go. Either way, call it a draw.
-            return 0;
-        } else {
-           
-            let bestResult = 20;
-
-            // Loop over all columns to test them in turn.
-            for (let c = 0; c < defaultCol; c++) {
-                if (isLegal(c)) {
-                   
-                    dropPiece(0,c, "human");
-                    
-                    let result = maxScoreForComputer(depth + 2);
-                    
-                    undoDrop(c);
-
-                    if (result <= bestResult) {
-                        bestResult = result;
-                    }
-                }
-            }
-            //console.log("minscore :"+ bestResult);
-            return bestResult;
-        }
-}
 
 
  
@@ -580,15 +493,7 @@ function isFull(){
     return true;
 }
 
-function undoDrop(column){
-    let row = 0;
-        while(ovals[row][column].empty && row < defaultRow) {
-            row++;
-        }
-        // Set the top row that had a piece to empty again.
-        ovals[row][column].player = "none";
-        ovals[row][column].empty = true;
-}
+
 
 
 function isLegal(column){
@@ -604,15 +509,15 @@ drawUpdate();
 
 
 function computerPlayer(){
-    console.log(computerPlaying+" "+ movingTile.visible + " "+turnCounter%2 );
+    console.log("computerplaying:"+ computerPlaying+" "+ movingTile.visible + " "+turnCounter%2 );
     //checkEndGame();
 
     if(!foundWinner && computerPlaying && !movingTile.visible && turnCounter%2 ===1){
         playerTurn =false;
         var bestCol = bestMoveforComputer();
-        dropPieceMove(0,bestCol,"computer");
         movingTile.rowStarted = 0;
         movingTile.colStarted = bestCol;
+        dropPieceMove(0,bestCol,"computer");
         movingTile.visible = false;
         //computerPlayer();
         //drawUpdate();
