@@ -13,8 +13,8 @@
     
 
         <p>Row size (4-20): <input type="text" id="rowInput" size="2"> Col size (4-20): <input type="text" id="colInput" size="2">
-            <button id="submission" type="button" class = "buttonRules">Two-Player</button>
-            <button id="reset" type="button" class = "buttonRules">Reset Game</button>
+            <button id="submission" type="button" class = "buttonRules" onclick="return confirm('Are you sure?')">Set New Board</button>
+            <a class="btn" href="connectfour.html" onclick="return confirm('Are you sure?')"><input class="buttonRules" type="button" value= "Reset"/></a>
             <button id="computer" type="button" class = "buttonRules" style = "display:none">Computer</button>
         </p>
         <p id="valid"></p>

@@ -4,7 +4,7 @@ const showRulesInstruction = document.getElementById('styleRulesId');
 
 const submitButton = document.getElementById('submission');
 
-const resetButton = document.getElementById('reset');
+//const resetButton = document.getElementById('reset');
 
 const computerButton = document.getElementById('computer');
 
@@ -94,7 +94,7 @@ closeRulesButton.addEventListener('click', () =>
 
 submitButton.addEventListener('click', setBoard);
 
-resetButton.addEventListener('click', resetBoard);
+//resetButton.addEventListener('click', resetBoard);
 
 computerButton.addEventListener('click', setComputer);
 
@@ -110,11 +110,10 @@ function setComputer(){
 }
 
 function setBoard(){
-    ovals = [];
-    turnCounter = 0;
+    
     let test ="";
-    var inputRow, inputCol =0;
-    if(!started){
+    let inputRow, inputCol =0;
+    
     
     if(!computerPlaying){
         inputRow = document.getElementById('rowInput').value;
@@ -128,6 +127,8 @@ function setBoard(){
         test = "Not-valid: give in between 4 and 20";
         
     } else {
+        ovals = [];
+        turnCounter = 0;
         test = "Enjoy !";
         started =true;
         defaultRow = inputRow;
@@ -158,10 +159,6 @@ function setBoard(){
         }
 
     }
-    
-} else{
-    test = "Press- reset and submit the board again";
-}
 
 document.getElementById("valid").innerHTML = test;
 }
