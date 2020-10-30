@@ -96,24 +96,18 @@ submitButton.addEventListener('click', setBoard);
 
 //resetButton.addEventListener('click', resetBoard);
 
-computerButton.addEventListener('click', setComputer);
 
-function setComputer(){
-    if(!started){
-    computerPlaying = true;
-    setBoard();
-    
 
-    } else {
-        alert('reset the game');
-    }    
-}
 
+window.setTimeout(checkEndGame,600);
 function setBoard(){
     
     let test ="";
     let inputRow, inputCol =0;
-    
+    foundWinner = false;
+    callOneTime = true;
+    timer = setTimeout(drawUpdate,200);
+    window.setTimeout(checkEndGame,600);
     
     if(!computerPlaying){
         inputRow = document.getElementById('rowInput').value;
@@ -331,7 +325,7 @@ function checkEndGame(){
     }
     
 }
-window.setTimeout(checkEndGame,600);
+
 
 
 function dropPiece(dropRow, dropCol, playerWho){
@@ -505,38 +499,11 @@ function isLegal(column){
 drawUpdate();
 
 
-function computerPlayer(){
-    console.log("computerplaying:"+ computerPlaying+" "+ movingTile.visible + " "+turnCounter%2 );
-    //checkEndGame();
 
-    if(!foundWinner && computerPlaying && !movingTile.visible && turnCounter%2 ===1){
-        playerTurn =false;
-        var bestCol = bestMoveforComputer();
-        movingTile.rowStarted = 0;
-        movingTile.colStarted = bestCol;
-        dropPieceMove(0,bestCol,"computer");
-        movingTile.visible = false;
-        //computerPlayer();
-        //drawUpdate();
-        console.log("this countcall : " + countCall);
-        countCall = 0;
-        console.log(turnCounter+ " : turn counter");
-        turnCounter++;
-        //playerTurn =true;
-    }
-    //console.log("Hi this is computer playing");
-    if(!foundWinner && computerPlaying){
-        window.setTimeout(computerPlayer,1000);
-    }
-    
-
-}
 var timer;
 
-//var computertimer =setTimeout(computerPlayer, 500);
-window.setTimeout(computerPlayer,2000);
 
-//computertimer= setTimeout(computerPlayer,500);
+
 
 function drawUpdate(){
     timer = setTimeout(drawUpdate,200);
