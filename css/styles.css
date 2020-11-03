@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 body{
     background-color: #f1f1f6;
    color: #40514E;
@@ -5,8 +6,61 @@ body{
     text-align: center;
     font-family: 'Merriweather', serif;
     font-size: 200%;
+    transition: transform 1s ease;
+    transform: translateX(0px);
     
 }
+
+
+nav{
+    background-color: rgb(168, 233, 245);
+    border-right: 2px solid rgba(200,200,0.1);
+    color: rgb(228, 224, 233);
+    
+    top: 0;
+    left: 0;
+    width: 300px;
+    height:120vh;
+    z-index:100;
+    transition: transform 1s ease-in-out;
+    transform: translateX(-100%);
+}
+body.show-nav{
+    transition: transform 1s ease-in-out;
+    transform: translateX(250px);
+}
+
+
+
+
+.container {
+    display: inline-block;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    left: 50px;
+    
+  }
+  
+  .bar1, .bar2, .bar3 {
+    width: 35px;
+    height: 5px;
+    background-color: #333;
+    margin: 6px 0;
+    transition: 0.4s;
+  }
+
+.change .bar1 {
+    -webkit-transform: rotate(-45deg) translate(-9px, 6px);
+    transform: rotate(-45deg) translate(-9px, 6px);
+  }
+  
+.change .bar2 {opacity: 0;}
+  
+.change .bar3 {
+    -webkit-transform: rotate(45deg) translate(-8px, -8px);
+    transform: rotate(45deg) translate(-8px, -8px);
+  }
 
 .nav-bar{
     height: 100px;
@@ -16,10 +70,12 @@ body{
 
 .topbar{
     height: 100px;
+    width: 10000px;
     background-color: black;
     position: sticky;
     top:0;
     opacity: .5;
+    transform: translateX(-10%);
 }
 
 ul{
