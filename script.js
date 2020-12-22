@@ -24,7 +24,11 @@ toggle.addEventListener('click', ()=> {
 // );
 let submitForm = document.getElementById("submit");
 
+
+
 function sendEmail(){
+  
+  
     console.log("sending email");
     Email.send({
         SecureToken : "9ee880b5-52ac-491e-9311-604a5000b59e",
@@ -45,16 +49,17 @@ function sendEmail(){
         );
 }
 
-let name;
+let nameGiven;
 let subject;
 let phone;
 let email;
 let message;
 let error_message;
+let allowEmailing= true;
 
   
 submitForm.addEventListener("click", e=>{
-    name = document.getElementById("name").value;
+    nameGiven = document.getElementById("name").value;
     subject = document.getElementById("subject").value;
     phone = document.getElementById("phone").value;
     email = document.getElementById("email").value;
@@ -64,7 +69,7 @@ submitForm.addEventListener("click", e=>{
     error_message.style.padding = "10px";
     
     var text;
-    if(name.length < 2){
+    if(nameGiven.length < 2){
       text = "Please Enter valid Name";
       error_message.innerHTML = text;
       console.log("error 1");
@@ -76,10 +81,11 @@ submitForm.addEventListener("click", e=>{
       console.log("error 1");
       return false;
     }
-    if(isNaN(phone) || phone.length < 10){
+    if((isNaN(phone) || phone.length < 10) && ! (phone.length ==0)){
       text = "Please Enter valid Phone Number";
       error_message.innerHTML = text;
       console.log("error 1");
+      console.log(phone);
       return false;
     }
     if(email.indexOf("@") == -1 || email.length < 4){
@@ -95,5 +101,17 @@ submitForm.addEventListener("click", e=>{
       return false;
     }
     
-    sendEmail();
+    if(allowEmailing){
+      text = "Sending email...";
+      error_message.innerHTML = text;
+      setTimeout(() => {
+        console.log("After allowing");
+        allowEmailing =true;
+      },15000)
+      allowEmailing = false;
+       sendEmail();
+    } else {
+      text = "Wait some time for another email";
+      error_message.innerHTML = text;
+    }
   });
