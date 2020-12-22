@@ -32,11 +32,12 @@ function sendEmail(){
     console.log("sending email");
     Email.send({
         SecureToken : "9ee880b5-52ac-491e-9311-604a5000b59e",
-        To : email,
+        To : email+",timilsinasandesh7@gmail.com",
         From : "timilsinasandesh7@mail.com",
         Subject : "Message sent to sandesh",
-        Body : "<html><h2>Thank You for reaching out.</h2><strong>Your subject : </strong>"+subject+
-         " <br></br><strong>Your message : </strong><br></br>"+message+ "<br></br> Thank you for "+
+        Body : "<html><h2>Thank You for visiting www.sandesht.com</h2><strong>Your subject : </strong>"+subject+
+         " <br></br><strong>Your message : </strong><br></br>"+message+ " <br></br><strong>Your Number : </strong>"+phone+
+         "<br></br> Thank you for "+
         "visitng www.sandesht.com</html>"
         }).then(function(response){
             if(response == 'OK'){
