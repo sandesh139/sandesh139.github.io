@@ -68,14 +68,18 @@ body.show-nav{
     position: sticky;
 }
 
+
+
+
 .topbar{
     height: 100px;
-    width: 10000px;
+    
+    width: auto;
     background-color: black;
     position: sticky;
     top:0;
     opacity: .5;
-    transform: translateX(-10%);
+    
 }
 
 ul{
@@ -207,7 +211,7 @@ a:hover{
 .bottom-container{
     margin-top: 100px;
     background-color: rgb(44, 148, 129);
-   
+    width: auto;
     padding-bottom: 50px;
     bottom: 0px;
     padding-top: 50px;
