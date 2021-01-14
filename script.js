@@ -16,12 +16,12 @@ toggle.addEventListener('click', ()=> {
 );
 
 
-// const toggleV = document.getElementById('toggleV');
-// toggleV.addEventListener('click', ()=> {
-//     document.body.classList.toggle('show-nav');
-//     document.body.classList.toggle('change');
-// }
-// );
+const toggleV = document.getElementById('toggleV');
+toggleV.addEventListener('click', ()=> {
+    document.body.classList.toggle('show-nav');
+    document.body.classList.toggle('change');
+}
+);
 let submitForm = document.getElementById("submit");
 
 
