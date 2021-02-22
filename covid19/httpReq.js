@@ -13,9 +13,10 @@ const proxyurl = "https://cors-anywhere.herokuapp.com/";
 const  api_url = "https://covidtracking.com/api/v1/states/daily.json";
 let dataGlobal = null;
 async  function getData() {
-    const response = await fetch(proxyurl+api_url, {
-        mode: 'cors'
-    });
+    // const response = await fetch(proxyurl+api_url, {
+    //     mode: 'cors'
+    // });
+    const response = await fetch("daily.json");
     dataGlobal = await response.json();
     await dataGlobal;
     for (let i = 0; i<50; i++){
