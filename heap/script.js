@@ -129,7 +129,7 @@ const movingIndexTwo = {
     targetX: 0,
     indexStarted: 0,
 }
-function swapNodes(nodeIndexOne, nodeIndexTwo){
+async function swapNodes(nodeIndexOne, nodeIndexTwo){
     movingIndexOne.indexStarted = nodeIndexOne;
     movingIndexOne.nodeValue = nodes[nodeIndexOne];
     movingIndexOne.x = 15 + nodeIndexOne*32;
@@ -147,17 +147,18 @@ function swapNodes(nodeIndexOne, nodeIndexTwo){
         movingIndexTwo.dx = -5;
     }
 
-    drawUpdateSwap();
+    await drawUpdateSwap();
     let temp = nodes[nodeIndexOne];
     nodes[nodeIndexOne] = nodes[nodeIndexTwo];
     nodes[nodeIndexTwo] = temp;
 }
 
-//best sleep implementation I have used in javascript.
-const sleep = (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
-}
-function drawUpdateSwap(){
+//sleep implementation. this doesnot block the program execution.
+const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milliseconds))
+
+
+ async function drawUpdateSwap(){
+    console.log("draw swap is called");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawLayout();
     for (let i =0; i<heapSize; i++){
@@ -178,10 +179,20 @@ function drawUpdateSwap(){
     ctx.fillText(movingIndexTwo.nodeValue, movingIndexTwo.x, 30);
     ctx.closePath();  
     if(!(Math.abs(movingIndexOne.targetX - movingIndexOne.x) <=5)){
-        sleep(250).then(() => {
+        console.log("sleep is called");
+        await sleep(300).then(() => {
             //do stuff
             drawUpdateSwap();
           })
+    } else {
+        while(hasParentNode(currIndex) && getParentNode(currIndex) > nodes[currIndex]){
+            console.log("swap node is called before");
+            swapNodes(getParentNodeIndex(currIndex),currIndex);
+            console.log("swap node is called after");
+            checkSwap = 1;
+            currIndex = getParentNodeIndex(currIndex);
+            
+        }
     }
 }
 
@@ -212,19 +223,17 @@ function addNode(){
     
     console.log(getMinNode());
 }
-
+let currIndex;
 function heapifyUp(){
-    let currIndex = heapSize -1;
+    currIndex = heapSize -1;
     let checkSwap = 0;
-    // console.log("this is parent node "+ getParentNode(currIndex));
-    // console.log("nodes : "+ nodes[currIndex]);
-    // console.log("curr Index : " + currIndex);
-    // console.log(hasParentNode(currIndex));
     while(hasParentNode(currIndex) && getParentNode(currIndex) > nodes[currIndex]){
-        console.log("swap node is called");
+        console.log("swap node is called before");
         swapNodes(getParentNodeIndex(currIndex),currIndex);
+        console.log("swap node is called after");
         checkSwap = 1;
         currIndex = getParentNodeIndex(currIndex);
+        
     }
     console.log(nodes);
     if(checkSwap==0){
