@@ -106,16 +106,12 @@ function setBoard(){
     let inputRow, inputCol =0;
     foundWinner = false;
     callOneTime = true;
-    timer = setTimeout(drawUpdate,200);
-    window.setTimeout(checkEndGame,600);
-    
-    if(!computerPlaying){
+    //timer = setTimeout(drawUpdate,200);
+    //window.setTimeout(checkEndGame,600);
+
         inputRow = document.getElementById('rowInput').value;
         inputCol = document.getElementById('colInput').value;
-    } else {
-        inputRow = defaultRow;
-        inputCol = defaultCol;
-    }
+  
     if (isNaN(inputRow) || inputRow < 4 || inputRow > 20 || isNaN(inputCol)
         || inputCol <4 || inputCol >20) {
         test = "Not-valid: give in between 4 and 20";
