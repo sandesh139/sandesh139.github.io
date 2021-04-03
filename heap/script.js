@@ -67,11 +67,18 @@ const remove = document.getElementById('remove');
 remove.addEventListener('click', removeNode);
 
 const removeAll = document.getElementById('removeAll');
+removeAll.addEventListener('click', removeAllNode);
 
+function removeAllNode(){
+    nodes = [];
+    heapSize =0;
+    drawUpdate();
+}
 let nodes = [];
 let heapSize = 0;
 function getLeftNodeIndex(nodeIndex){
     return 2 *nodeIndex +1;
+    
 }
 
 function getRightNodeIndex(nodeIndex){
@@ -236,8 +243,8 @@ async  function getData() {
     ctx.arc(tree[movingIndexTwo.indexStarted][0] , tree[movingIndexTwo.indexStarted][1], 20, 0, 2 * Math.PI);
     ctx.stroke();
   
-    ctx.fillText(""+movingIndexTwo.nodeValue, tree[movingIndexOne.indexStarted][0] , tree[movingIndexOne.indexStarted][1]);
-    ctx.fillText(""+movingIndexOne.nodeValue, tree[movingIndexTwo.indexStarted][0] , tree[movingIndexTwo.indexStarted][1]);
+    ctx.fillText(""+movingIndexTwo.nodeValue, tree[movingIndexOne.indexStarted][0] -5, tree[movingIndexOne.indexStarted][1]);
+    ctx.fillText(""+movingIndexOne.nodeValue, tree[movingIndexTwo.indexStarted][0] -5, tree[movingIndexTwo.indexStarted][1]);
     
     ctx.closePath();
    
