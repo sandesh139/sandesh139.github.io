@@ -7,13 +7,16 @@ const color1 = 'black';
 drawLayout();
 function drawLayout(){
     ctx.beginPath();
+    ctx.lineWidth =1;
     ctx.rect(0,0,canvas.width, canvas.height);
     ctx.fillStyle =  colorBackground;
     ctx.fill();
     ctx.closePath();
     for (let i =0; i< 31; i++){
         ctx.beginPath();
+        
         ctx.strokeRect(10+i*32,5,32,30);
+        ctx.font = '15px serif';
         ctx.fillStyle = '#131E3A';
         ctx.fillText(""+i, 20+i*32, 45);
         ctx.closePath();    
@@ -24,16 +27,18 @@ function canvas_arrow(context, fromx, fromy, tox, toy) {
     var dx = tox - fromx;
     var dy = toy - fromy;
     var angle = Math.atan2(dy, dx);
-    context.moveTo(fromx, fromy);
-    context.lineTo(tox, toy);
-    context.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
-    context.moveTo(tox, toy);
-    context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+    ctx.moveTo(fromx, fromy);
+    ctx.lineTo(tox, toy);
+    ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+    ctx.moveTo(tox, toy);
+    ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+    
   }
 
   
 
 function drawUpdate(){
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawLayout();
     for (let i =0; i<heapSize; i++){
@@ -43,6 +48,7 @@ function drawUpdate(){
         ctx.fillText(""+nodes[i], 15+i*32, 30);
         ctx.fillText(""+ nodes[i], tree[i][0]-5,tree[i][1]+2);
         ctx.arc(tree[i][0], tree[i][1], 20, 0, 2 * Math.PI);
+       
         if(i>0 && i%2==1){
             canvas_arrow(ctx,tree[i][2]-20,tree[i][3]-20,tree[i][0],tree[i][1]-20);
         } else if(i >0){
@@ -55,8 +61,12 @@ function drawUpdate(){
 
 
 const add = document.getElementById('add');
-
 add.addEventListener('click', addNode);
+
+const remove = document.getElementById('remove');
+remove.addEventListener('click', removeNode);
+
+const removeAll = document.getElementById('removeAll');
 
 let nodes = [];
 let heapSize = 0;
@@ -171,6 +181,7 @@ async function swapNodes(nodeIndexOne, nodeIndexTwo){
     let temp = nodes[nodeIndexOne];
     nodes[nodeIndexOne] = nodes[nodeIndexTwo];
     nodes[nodeIndexTwo] = temp;
+    
 }
 
 //sleep implementation. this doesnot block the program execution.
@@ -184,12 +195,13 @@ async  function getData() {
 }
 
  async function drawUpdateSwap(){
-    console.log("draw swap is called");
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawLayout();
     for (let i =0; i<heapSize; i++){
         if(!(i==movingIndexOne.indexStarted || i == movingIndexTwo.indexStarted)){
             ctx.beginPath();
+            
             ctx.fillStyle = color1;
             ctx.font = '15px serif';
             ctx.fillText(""+nodes[i], 15+i*32, 30);
@@ -204,25 +216,41 @@ async  function getData() {
             canvas_arrow(ctx,tree[i][2]+20,tree[i][3]-20,tree[i][0],tree[i][1]-20);
         }
         ctx.stroke();
+        ctx.closePath();
+        
     }
-
+    
     movingIndexOne.x += movingIndexOne.dx;
     movingIndexTwo.x +=movingIndexTwo.dx;
+    working =true;
     ctx.beginPath();
     ctx.fillStyle = color2;
-    ctx.font = '15px serif';
+    ctx.font = 'bold 20px serif';
     ctx.fillText(movingIndexOne.nodeValue, movingIndexOne.x, 30);
     ctx.fillText(movingIndexTwo.nodeValue, movingIndexTwo.x, 30);
+    ctx.lineWidth =5;
+    ctx.arc(tree[movingIndexOne.indexStarted][0] , tree[movingIndexOne.indexStarted][1], 20, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+    ctx.arc(tree[movingIndexTwo.indexStarted][0] , tree[movingIndexTwo.indexStarted][1], 20, 0, 2 * Math.PI);
+    ctx.stroke();
+  
     ctx.fillText(""+movingIndexTwo.nodeValue, tree[movingIndexOne.indexStarted][0] , tree[movingIndexOne.indexStarted][1]);
     ctx.fillText(""+movingIndexOne.nodeValue, tree[movingIndexTwo.indexStarted][0] , tree[movingIndexTwo.indexStarted][1]);
-    ctx.closePath();  
+    
+    ctx.closePath();
+   
     if(!(Math.abs(movingIndexOne.targetX - movingIndexOne.x) <=5)){
-        console.log("sleep is called");
+     
         await sleep(300).then(() => {
             //do stuff
             drawUpdateSwap();
+           
           })
     } else {
+        working =false;
+        if (heapify == "up"){
         while(hasParentNode(currIndex) && getParentNode(currIndex) > nodes[currIndex]){
             console.log("swap node is called before");
             swapNodes(getParentNodeIndex(currIndex),currIndex);
@@ -230,9 +258,28 @@ async  function getData() {
             checkSwap = 1;
             currIndex = getParentNodeIndex(currIndex);
         }
+    } else if (heapify == "down"){
+        while(hasLeftNode(currIndex)){
+            let smallerChildIndex = getLeftNodeIndex(currIndex);
+            if(hasRightNode(currIndex) && getRightNode(currIndex) < getLeftNode(currIndex)){
+                smallerChildIndex = getRightNodeIndex(currIndex);
+            }
+            if(nodes[currIndex] < nodes[smallerChildIndex]){
+                break;
+            } else {
+                checkSwap =1;
+                console.log("swap down is called after");
+                swapNodes(currIndex, smallerChildIndex);
+            }
+            currIndex = smallerChildIndex;
+        }
     }
+
+    }
+    
 }
 
+let heapify ="";
 
 /**
  * @returns the min node
@@ -250,18 +297,24 @@ function removeNode(){
 }
 
 
-
+let working = false;
 
 function addNode(){
     addString = document.getElementById('addInput').value;
+    if(addString===""){
+        return;
+    }
     addInput = parseInt(addString, 10);
+    if(addInput>1000|| addInput<-1000 || working == true){
+        return;
+    }
     nodes[heapSize] = addInput;
     console.log("added"+addInput);
     document.getElementById('addInput').value = "";
     heapSize++;
     heapifyUp();
     
-    console.log(getMinNode());
+   
 }
 
 
@@ -270,6 +323,7 @@ function heapifyUp(){
     currIndex = heapSize -1;
     let checkSwap = 0;
     while(hasParentNode(currIndex) && getParentNode(currIndex) > nodes[currIndex]){
+        heapify = "up";
         console.log("swap node is called before");
         swapNodes(getParentNodeIndex(currIndex),currIndex);
         console.log("swap node is called after");
@@ -284,7 +338,7 @@ function heapifyUp(){
 }
 
 function heapifyDown(){
-    let currIndex = 0;
+    currIndex = 0;
     let checkSwap = 0;
     while(hasLeftNode(currIndex)){
         let smallerChildIndex = getLeftNodeIndex(currIndex);
@@ -295,6 +349,7 @@ function heapifyDown(){
             break;
         } else {
             checkSwap =1;
+            heapify ="down";
             swapNodes(currIndex, smallerChildIndex);
         }
         currIndex = smallerChildIndex;
