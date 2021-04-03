@@ -18,7 +18,17 @@ function drawLayout(){
         ctx.closePath();    
     }
 }
-
+function canvas_arrow(context, fromx, fromy, tox, toy) {
+    var headlen = 10; // length of head in pixels
+    var dx = tox - fromx;
+    var dy = toy - fromy;
+    var angle = Math.atan2(dy, dx);
+    context.moveTo(fromx, fromy);
+    context.lineTo(tox, toy);
+    context.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+    context.moveTo(tox, toy);
+    context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+  }
 
 
 function drawUpdate(){
@@ -29,6 +39,13 @@ function drawUpdate(){
         ctx.fillStyle = 'green';
         ctx.font = '15px serif';
         ctx.fillText(""+nodes[i], 15+i*32, 30);
+        ctx.arc(tree[i][0], tree[i][1], 20, 0, 2 * Math.PI);
+        if(i>0 && i%2==1){
+            canvas_arrow(ctx,tree[i][2]-20,tree[i][3]-20,tree[i][0],tree[i][1]-20);
+        } else if(i >0){
+            canvas_arrow(ctx,tree[i][2]+20,tree[i][3]-20,tree[i][0],tree[i][1]-20);
+        }
+        ctx.stroke();
         ctx.closePath();    
     }
 }
@@ -154,8 +171,14 @@ async function swapNodes(nodeIndexOne, nodeIndexTwo){
 }
 
 //sleep implementation. this doesnot block the program execution.
-const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milliseconds))
+const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milliseconds));
 
+getData();
+let tree;
+async  function getData() {
+    const response = await fetch("tree.json");
+    tree = await response.json();
+}
 
  async function drawUpdateSwap(){
     console.log("draw swap is called");
@@ -167,13 +190,17 @@ const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milli
             ctx.fillStyle = 'green';
             ctx.font = '15px serif';
             ctx.fillText(""+nodes[i], 15+i*32, 30);
+            // ctx.closePath();  
+            // ctx.beginPath();
+            
             ctx.closePath();  
         }
     }
+
     movingIndexOne.x += movingIndexOne.dx;
     movingIndexTwo.x +=movingIndexTwo.dx;
     ctx.beginPath();
-    ctx.fillStyle = 'green';
+    ctx.fillStyle = 'red';
     ctx.font = '15px serif';
     ctx.fillText(movingIndexOne.nodeValue, movingIndexOne.x, 30);
     ctx.fillText(movingIndexTwo.nodeValue, movingIndexTwo.x, 30);
@@ -191,7 +218,6 @@ const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milli
             console.log("swap node is called after");
             checkSwap = 1;
             currIndex = getParentNodeIndex(currIndex);
-            
         }
     }
 }
@@ -212,17 +238,24 @@ function removeNode(){
     heapifyDown();
 }
 
+//delete this testing
+
+
 function addNode(){
     addString = document.getElementById('addInput').value;
     addInput = parseInt(addString, 10);
+    for (let i =0; i <31;i++){
+    addInput = i;
     nodes[heapSize] = addInput;
     console.log("added"+addInput);
     document.getElementById('addInput').value = "";
     heapSize++;
     heapifyUp();
-    
+    }
     console.log(getMinNode());
 }
+
+
 let currIndex;
 function heapifyUp(){
     currIndex = heapSize -1;
