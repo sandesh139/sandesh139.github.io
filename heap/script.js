@@ -1,19 +1,20 @@
 
 const canvas = document.getElementById('drawing');
 const ctx = canvas.getContext('2d');
-
-
+const colorBackground = "#9966CB";
+const color2 = 'green';
+const color1 = 'black';
 drawLayout();
 function drawLayout(){
     ctx.beginPath();
     ctx.rect(0,0,canvas.width, canvas.height);
-    ctx.fillStyle =  '#A9A9A9';
+    ctx.fillStyle =  colorBackground;
     ctx.fill();
     ctx.closePath();
-    for (let i =0; i< 30; i++){
+    for (let i =0; i< 31; i++){
         ctx.beginPath();
         ctx.strokeRect(10+i*32,5,32,30);
-        ctx.fillStyle = 'blue';
+        ctx.fillStyle = '#131E3A';
         ctx.fillText(""+i, 20+i*32, 45);
         ctx.closePath();    
     }
@@ -30,15 +31,17 @@ function canvas_arrow(context, fromx, fromy, tox, toy) {
     context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
   }
 
+  
 
 function drawUpdate(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawLayout();
     for (let i =0; i<heapSize; i++){
         ctx.beginPath();
-        ctx.fillStyle = 'green';
+        ctx.fillStyle = color1;
         ctx.font = '15px serif';
         ctx.fillText(""+nodes[i], 15+i*32, 30);
+        ctx.fillText(""+ nodes[i], tree[i][0]-5,tree[i][1]+2);
         ctx.arc(tree[i][0], tree[i][1], 20, 0, 2 * Math.PI);
         if(i>0 && i%2==1){
             canvas_arrow(ctx,tree[i][2]-20,tree[i][3]-20,tree[i][0],tree[i][1]-20);
@@ -187,23 +190,31 @@ async  function getData() {
     for (let i =0; i<heapSize; i++){
         if(!(i==movingIndexOne.indexStarted || i == movingIndexTwo.indexStarted)){
             ctx.beginPath();
-            ctx.fillStyle = 'green';
+            ctx.fillStyle = color1;
             ctx.font = '15px serif';
             ctx.fillText(""+nodes[i], 15+i*32, 30);
-            // ctx.closePath();  
-            // ctx.beginPath();
-            
+            ctx.fillText(""+nodes[i], tree[i][0] , tree[i][1]);
             ctx.closePath();  
         }
+        ctx.beginPath();
+        ctx.arc(tree[i][0]+3, tree[i][1], 20, 0, 2 * Math.PI);
+        if(i>0 && i%2==1){
+            canvas_arrow(ctx,tree[i][2]-20,tree[i][3]-20,tree[i][0],tree[i][1]-20);
+        } else if(i >0){
+            canvas_arrow(ctx,tree[i][2]+20,tree[i][3]-20,tree[i][0],tree[i][1]-20);
+        }
+        ctx.stroke();
     }
 
     movingIndexOne.x += movingIndexOne.dx;
     movingIndexTwo.x +=movingIndexTwo.dx;
     ctx.beginPath();
-    ctx.fillStyle = 'red';
+    ctx.fillStyle = color2;
     ctx.font = '15px serif';
     ctx.fillText(movingIndexOne.nodeValue, movingIndexOne.x, 30);
     ctx.fillText(movingIndexTwo.nodeValue, movingIndexTwo.x, 30);
+    ctx.fillText(""+movingIndexTwo.nodeValue, tree[movingIndexOne.indexStarted][0] , tree[movingIndexOne.indexStarted][1]);
+    ctx.fillText(""+movingIndexOne.nodeValue, tree[movingIndexTwo.indexStarted][0] , tree[movingIndexTwo.indexStarted][1]);
     ctx.closePath();  
     if(!(Math.abs(movingIndexOne.targetX - movingIndexOne.x) <=5)){
         console.log("sleep is called");
@@ -238,20 +249,18 @@ function removeNode(){
     heapifyDown();
 }
 
-//delete this testing
+
 
 
 function addNode(){
     addString = document.getElementById('addInput').value;
     addInput = parseInt(addString, 10);
-    for (let i =0; i <31;i++){
-    addInput = i;
     nodes[heapSize] = addInput;
     console.log("added"+addInput);
     document.getElementById('addInput').value = "";
     heapSize++;
     heapifyUp();
-    }
+    
     console.log(getMinNode());
 }
 
