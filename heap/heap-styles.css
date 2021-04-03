@@ -7,6 +7,14 @@
     background-color: rgb(14, 12, 24);
     
 }
+.topButtons{
+    position:absolute;
+    top: 30px;;
+    width: 100%;
+    left:500px;   
+}
+
+
 body{
     background-color: #2c262f;
     display: flex;
