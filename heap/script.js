@@ -312,7 +312,7 @@ function addNode(){
         return;
     }
     addInput = parseInt(addString, 10);
-    if(addInput>1000|| addInput<-1000 || working == true){
+    if(addInput>1000|| addInput<-1000 || working == true|| nodes.length>30){
         return;
     }
     nodes[heapSize] = addInput;
