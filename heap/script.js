@@ -292,12 +292,14 @@ let heapify ="";
  * @returns the min node
  */
 function getMinNode(){
-    if(heapSize == 0) throw new IllegalStateException();
+    if(heapSize == 0) {
+        return;
+    };
     return nodes[0];
 }
 
 function removeNode(){
-    if(heapSize == 0) throw new IllegalStateException();
+    if(heapSize == 0) return;
     nodes[0] = nodes[heapSize-1];
     heapSize--;
     heapifyDown();
